@@ -1,0 +1,4 @@
+# config/routes.yaml
+controllers:
+  resource: '../src/Actions/'
+  type:     annotation
