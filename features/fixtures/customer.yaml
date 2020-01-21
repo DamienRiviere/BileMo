@@ -1,0 +1,16 @@
+include:
+  - 'address_customer.yaml'
+
+App\Entity\Customer:
+  customer1:
+    email: '<email()>'
+    password: '<password()>'
+    organization: '<company()>'
+    customerSince: '<datetime()>'
+    address: '@addressCustomer1'
+  customer2:
+    email: '<email()>'
+    password: '<password()>'
+    organization: '<company()>'
+    customerSince: '<datetime()>'
+    address: '@addressCustomer2'
