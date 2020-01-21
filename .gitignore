@@ -22,3 +22,4 @@ behat.yml.dist
 /.phpcs-cache
 /phpcs.xml
 ###< squizlabs/php_codesniffer ###
+!/composer.phar
