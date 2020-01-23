@@ -81,7 +81,8 @@ final class CreateCustomerCommand extends Command
             ->setPassword($this->encoder->encodePassword($customer, $password))
             ->setOrganization($organization)
             ->setCustomerSince(new \DateTime())
-            ->setAddress($customerAddress);
+            ->setAddress($customerAddress)
+            ->setRoles("ROLE_USER");
 
         $this->em->persist($customer);
         $this->em->flush();

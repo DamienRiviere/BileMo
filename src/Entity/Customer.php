@@ -50,6 +50,11 @@ class Customer implements UserInterface
      */
     private $users;
 
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -151,33 +156,28 @@ class Customer implements UserInterface
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRoles()
     {
-        // TODO: Implement getRoles() method.
+        return $this->roles;
     }
 
-    /**
-     * @inheritDoc
-     */
+    public function setRoles($roles): self
+    {
+        $this->roles[] = $roles;
+
+        return $this;
+    }
+
     public function getSalt()
     {
         return null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getUsername()
     {
         return $this->email;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function eraseCredentials()
     {
         return;

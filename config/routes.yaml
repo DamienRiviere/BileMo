@@ -2,3 +2,6 @@
 controllers:
   resource: '../src/Actions/'
   type:     annotation
+
+api_login_check:
+  path: /api/login_check
