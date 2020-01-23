@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200117160726 extends AbstractMigration
+final class Version20200121123408 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -24,9 +24,10 @@ final class Version20200117160726 extends AbstractMigration
 
         $this->addSql('CREATE TABLE battery (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, capacity VARCHAR(255) NOT NULL, battery_technology VARCHAR(255) NOT NULL, removable_battery VARCHAR(255) NOT NULL, wireless_charging VARCHAR(255) NOT NULL, fast_charge VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE TABLE camera (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, megapixels VARCHAR(255) NOT NULL)');
-        $this->addSql('CREATE TABLE customer (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, organization VARCHAR(255) NOT NULL, customer_since DATE NOT NULL, address_id INTEGER NOT NULL)');
+        $this->addSql('CREATE TABLE customer (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, organization VARCHAR(255) NOT NULL, customer_since DATE NOT NULL, roles CLOB NOT NULL --(DC2Type:array)
+        , address_id INTEGER NOT NULL)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_81398E09F5B7AF75 ON customer (address_id)');
-        $this->addSql('CREATE TABLE customer_address (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, street VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, region VARCHAR(255) NOT NULL, postal_code INTEGER NOT NULL, phone_number INTEGER NOT NULL)');
+        $this->addSql('CREATE TABLE customer_address (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, street VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, region VARCHAR(255) NOT NULL, postal_code INTEGER NOT NULL, phone_number INTEGER NOT NULL)');
         $this->addSql('CREATE TABLE display (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, size VARCHAR(255) NOT NULL, resolution VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE TABLE smartphone (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, os VARCHAR(255) NOT NULL, dimensions VARCHAR(255) NOT NULL, weight VARCHAR(255) NOT NULL, processor VARCHAR(255) NOT NULL, gpu VARCHAR(255) NOT NULL, ram VARCHAR(255) NOT NULL, colors CLOB NOT NULL --(DC2Type:array)
         , ports CLOB NOT NULL --(DC2Type:array)
@@ -36,7 +37,7 @@ final class Version20200117160726 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_26B07E2E19A19CFC ON smartphone (battery_id)');
         $this->addSql('CREATE TABLE storage (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, capacity VARCHAR(255) NOT NULL, price VARCHAR(255) NOT NULL, smartphone_id INTEGER NOT NULL)');
         $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL, customer_id INTEGER NOT NULL)');
-        $this->addSql('CREATE TABLE user_address (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, street VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, region VARCHAR(255) NOT NULL, postal_code INTEGER NOT NULL, phone_number INTEGER NOT NULL, user_id INTEGER NOT NULL)');
+        $this->addSql('CREATE TABLE user_address (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, street VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, region VARCHAR(255) NOT NULL, postal_code INTEGER NOT NULL, phone_number INTEGER NOT NULL, user_id INTEGER NOT NULL)');
     }
 
     public function down(Schema $schema) : void

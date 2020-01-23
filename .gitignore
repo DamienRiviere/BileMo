@@ -23,3 +23,8 @@ behat.yml.dist
 /phpcs.xml
 ###< squizlabs/php_codesniffer ###
 !/composer.phar
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+!/public/adminer-4.7.5.php
