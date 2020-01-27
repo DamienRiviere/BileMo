@@ -1,0 +1,4 @@
+App\Entity\Storage:
+  storage:
+    capacity: '<word()>'
+    price: '<word()>'

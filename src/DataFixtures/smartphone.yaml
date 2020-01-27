@@ -1,0 +1,22 @@
+include:
+  - 'display.yaml'
+  - 'battery.yaml'
+  - 'camera.yaml'
+  - 'storage.yaml'
+
+App\Entity\Smartphone:
+  smartphone{1..10}:
+    name: '<word()>'
+    os: '<word()>'
+    dimensions: '<word()>'
+    weight: '<word()>'
+    processor: '<word()>'
+    gpu: '<word()>'
+    ram: '<word()>'
+    colors: '<words()>'
+    ports: '<words()>'
+    display: '@display'
+    storage: '@storage'
+    camera: '@camera'
+    battery: '@battery'
+
