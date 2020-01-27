@@ -70,7 +70,7 @@ class Smartphone
     private $display;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Storage", mappedBy="smartphone", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Storage", mappedBy="smartphone", orphanRemoval=true, cascade={"persist"})
      */
     private $storage;
 
@@ -222,6 +222,13 @@ class Smartphone
     public function getStorage(): Collection
     {
         return $this->storage;
+    }
+
+    public function setStorage($storage): self
+    {
+        $this->storage[] = $storage;
+
+        return $this;
     }
 
     public function addStorage(Storage $storage): self
