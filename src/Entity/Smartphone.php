@@ -22,77 +22,90 @@ class Smartphone
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $os;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $dimensions;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $weight;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $processor;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $gpu;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $ram;
 
     /**
      * @ORM\Column(type="array")
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $colors = [];
 
     /**
      * @ORM\Column(type="array")
      * @Groups({"showProducts"})
+     * @Groups({"showProductsDetails"})
      */
     private $ports = [];
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Display", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"showProductsDetails"})
      */
     private $display;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Storage", mappedBy="smartphone", orphanRemoval=true, cascade={"persist"})
+     * @Groups({"showProductsDetails"})
      */
     private $storage;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Camera", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"showProductsDetails"})
      */
     private $camera;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Battery", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"showProductsDetails"})
      */
     private $battery;
 

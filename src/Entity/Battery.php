@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BatteryRepository")
@@ -18,26 +19,31 @@ class Battery
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $capacity;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $batteryTechnology;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $removableBattery;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $wirelessCharging;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $fastCharge;
 

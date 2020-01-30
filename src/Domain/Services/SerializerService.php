@@ -24,11 +24,11 @@ final class SerializerService
     }
 
     /**
-     * @param array $data
+     * @param $data
      * @param array $groups
      * @return string
      */
-    public function serializerHandlingReferences(array $data, array $groups)
+    public function serializer($data, array $groups)
     {
         return $this->serializer->serialize($data, 'json', $groups);
     }
