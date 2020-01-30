@@ -5,6 +5,10 @@ namespace App\Domain\EventListener;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationFailureResponse;
 
+/**
+ * Class AuthenticationFailureListener
+ * @package App\Domain\EventListener
+ */
 final class AuthenticationFailureListener
 {
 

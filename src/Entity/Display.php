@@ -36,16 +36,26 @@ class Display
      */
     private $smartphone;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSize(): ?string
     {
         return $this->size;
     }
 
+    /**
+     * @param string $size
+     * @return $this
+     */
     public function setSize(string $size): self
     {
         $this->size = $size;
@@ -53,11 +63,18 @@ class Display
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getResolution(): ?string
     {
         return $this->resolution;
     }
 
+    /**
+     * @param string $resolution
+     * @return $this
+     */
     public function setResolution(string $resolution): self
     {
         $this->resolution = $resolution;
@@ -65,11 +82,18 @@ class Display
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
+    /**
+     * @param string $type
+     * @return $this
+     */
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -77,11 +101,18 @@ class Display
         return $this;
     }
 
+    /**
+     * @return Smartphone|null
+     */
     public function getSmartphone(): ?Smartphone
     {
         return $this->smartphone;
     }
 
+    /**
+     * @param Smartphone $smartphone
+     * @return $this
+     */
     public function setSmartphone(Smartphone $smartphone): self
     {
         $this->smartphone = $smartphone;

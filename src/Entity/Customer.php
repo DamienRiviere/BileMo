@@ -55,21 +55,34 @@ class Customer implements UserInterface
      */
     private $roles = [];
 
+    /**
+     * Customer constructor.
+     */
     public function __construct()
     {
         $this->users = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     * @return $this
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -77,11 +90,18 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    /**
+     * @param string $password
+     * @return $this
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -89,11 +109,18 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getOrganization(): ?string
     {
         return $this->organization;
     }
 
+    /**
+     * @param string $organization
+     * @return $this
+     */
     public function setOrganization(string $organization): self
     {
         $this->organization = $organization;
@@ -101,11 +128,18 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getCustomerSince(): ?\DateTimeInterface
     {
         return $this->customerSince;
     }
 
+    /**
+     * @param \DateTimeInterface $customerSince
+     * @return $this
+     */
     public function setCustomerSince(\DateTimeInterface $customerSince): self
     {
         $this->customerSince = $customerSince;
@@ -113,11 +147,18 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @return CustomerAddress|null
+     */
     public function getAddress(): ?CustomerAddress
     {
         return $this->address;
     }
 
+    /**
+     * @param CustomerAddress $address
+     * @return $this
+     */
     public function setAddress(CustomerAddress $address): self
     {
         $this->address = $address;
@@ -133,6 +174,10 @@ class Customer implements UserInterface
         return $this->users;
     }
 
+    /**
+     * @param User $user
+     * @return $this
+     */
     public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
@@ -143,6 +188,10 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @param User $user
+     * @return $this
+     */
     public function removeUser(User $user): self
     {
         if ($this->users->contains($user)) {
@@ -156,11 +205,18 @@ class Customer implements UserInterface
         return $this;
     }
 
-    public function getRoles()
+    /**
+     * @return array
+     */
+    public function getRoles(): array
     {
         return $this->roles;
     }
 
+    /**
+     * @param $roles
+     * @return $this
+     */
     public function setRoles($roles): self
     {
         $this->roles[] = $roles;
@@ -168,11 +224,17 @@ class Customer implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSalt()
     {
         return null;
     }
 
+    /**
+     * @return string
+     */
     public function getUsername()
     {
         return $this->email;

@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SmartphoneRepository")
@@ -20,46 +21,55 @@ class Smartphone
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $os;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $dimensions;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $weight;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $processor;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $gpu;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProducts"})
      */
     private $ram;
 
     /**
      * @ORM\Column(type="array")
+     * @Groups({"showProducts"})
      */
     private $colors = [];
 
     /**
      * @ORM\Column(type="array")
+     * @Groups({"showProducts"})
      */
     private $ports = [];
 
@@ -86,21 +96,34 @@ class Smartphone
      */
     private $battery;
 
+    /**
+     * Smartphone constructor.
+     */
     public function __construct()
     {
         $this->storage = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -108,11 +131,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getOs(): ?string
     {
         return $this->os;
     }
 
+    /**
+     * @param string $os
+     * @return $this
+     */
     public function setOs(string $os): self
     {
         $this->os = $os;
@@ -120,11 +150,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDimensions(): ?string
     {
         return $this->dimensions;
     }
 
+    /**
+     * @param string $dimensions
+     * @return $this
+     */
     public function setDimensions(string $dimensions): self
     {
         $this->dimensions = $dimensions;
@@ -132,11 +169,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getWeight(): ?string
     {
         return $this->weight;
     }
 
+    /**
+     * @param string $weight
+     * @return $this
+     */
     public function setWeight(string $weight): self
     {
         $this->weight = $weight;
@@ -144,11 +188,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getProcessor(): ?string
     {
         return $this->processor;
     }
 
+    /**
+     * @param string $processor
+     * @return $this
+     */
     public function setProcessor(string $processor): self
     {
         $this->processor = $processor;
@@ -156,11 +207,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getGpu(): ?string
     {
         return $this->gpu;
     }
 
+    /**
+     * @param string $gpu
+     * @return $this
+     */
     public function setGpu(string $gpu): self
     {
         $this->gpu = $gpu;
@@ -168,11 +226,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getRam(): ?string
     {
         return $this->ram;
     }
 
+    /**
+     * @param string $ram
+     * @return $this
+     */
     public function setRam(string $ram): self
     {
         $this->ram = $ram;
@@ -180,11 +245,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return array|null
+     */
     public function getColors(): ?array
     {
         return $this->colors;
     }
 
+    /**
+     * @param array $colors
+     * @return $this
+     */
     public function setColors(array $colors): self
     {
         $this->colors = $colors;
@@ -192,11 +264,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return array|null
+     */
     public function getPorts(): ?array
     {
         return $this->ports;
     }
 
+    /**
+     * @param array $ports
+     * @return $this
+     */
     public function setPorts(array $ports): self
     {
         $this->ports = $ports;
@@ -204,11 +283,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return Display|null
+     */
     public function getDisplay(): ?Display
     {
         return $this->display;
     }
 
+    /**
+     * @param Display $display
+     * @return $this
+     */
     public function setDisplay(Display $display): self
     {
         $this->display = $display;
@@ -224,6 +310,10 @@ class Smartphone
         return $this->storage;
     }
 
+    /**
+     * @param $storage
+     * @return $this
+     */
     public function setStorage($storage): self
     {
         $this->storage[] = $storage;
@@ -231,6 +321,10 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @param Storage $storage
+     * @return $this
+     */
     public function addStorage(Storage $storage): self
     {
         if (!$this->storage->contains($storage)) {
@@ -241,6 +335,10 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @param Storage $storage
+     * @return $this
+     */
     public function removeStorage(Storage $storage): self
     {
         if ($this->storage->contains($storage)) {
@@ -254,11 +352,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return Camera|null
+     */
     public function getCamera(): ?Camera
     {
         return $this->camera;
     }
 
+    /**
+     * @param Camera $camera
+     * @return $this
+     */
     public function setCamera(Camera $camera): self
     {
         $this->camera = $camera;
@@ -266,11 +371,18 @@ class Smartphone
         return $this;
     }
 
+    /**
+     * @return Battery|null
+     */
     public function getBattery(): ?Battery
     {
         return $this->battery;
     }
 
+    /**
+     * @param Battery $battery
+     * @return $this
+     */
     public function setBattery(Battery $battery): self
     {
         $this->battery = $battery;

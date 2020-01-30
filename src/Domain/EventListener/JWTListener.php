@@ -8,6 +8,10 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTNotFoundEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationFailureResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Class JWTListener
+ * @package App\Domain\EventListener
+ */
 final class JWTListener
 {
 

@@ -26,16 +26,26 @@ class Camera
      */
     private $smartphone;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getMegapixels(): ?string
     {
         return $this->megapixels;
     }
 
+    /**
+     * @param string $megapixels
+     * @return $this
+     */
     public function setMegapixels(string $megapixels): self
     {
         $this->megapixels = $megapixels;
@@ -43,11 +53,18 @@ class Camera
         return $this;
     }
 
+    /**
+     * @return Smartphone|null
+     */
     public function getSmartphone(): ?Smartphone
     {
         return $this->smartphone;
     }
 
+    /**
+     * @param Smartphone $smartphone
+     * @return $this
+     */
     public function setSmartphone(Smartphone $smartphone): self
     {
         $this->smartphone = $smartphone;
