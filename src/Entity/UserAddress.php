@@ -42,7 +42,7 @@ class UserAddress
     private $phoneNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="address")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="address", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

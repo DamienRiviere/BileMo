@@ -4,9 +4,9 @@ namespace App\Actions;
 
 use App\Domain\Services\SerializerService;
 use App\Repository\SmartphoneRepository;
+use App\Responder\JsonResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Class ShowProducts
@@ -23,25 +23,26 @@ final class ShowProducts
     /** @var SerializerService */
     protected $serializer;
 
+    /**
+     * ShowProducts constructor.
+     * @param SmartphoneRepository $smartRepo
+     * @param SerializerService $serializer
+     */
     public function __construct(SmartphoneRepository $smartRepo, SerializerService $serializer)
     {
         $this->smartRepo = $smartRepo;
         $this->serializer = $serializer;
     }
 
-    public function __invoke()
+    /**
+     * @param JsonResponder $responder
+     * @return Response
+     */
+    public function __invoke(JsonResponder $responder): Response
     {
-        $products = $this->smartRepo->findAll();
+        $products =  $this->smartRepo->findAll();
+        $data = $this->serializer->serializerHandlingReferences($products, ['groups' => ['showProducts']]);
 
-        if (!$products) {
-            throw new ResourceNotFoundException("Aucun produit n'a été trouver", 404);
-        }
-
-        $data = $this->serializer->serializerHandlingReferences($products);
-        $response = new Response($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Location', '/api/products');
-
-        return $response;
+        return $responder($data, Response::HTTP_OK);
     }
 }

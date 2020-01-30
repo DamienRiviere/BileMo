@@ -46,16 +46,26 @@ class Battery
      */
     private $smartphone;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCapacity(): ?string
     {
         return $this->capacity;
     }
 
+    /**
+     * @param string $capacity
+     * @return $this
+     */
     public function setCapacity(string $capacity): self
     {
         $this->capacity = $capacity;
@@ -63,11 +73,18 @@ class Battery
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBatteryTechnology(): ?string
     {
         return $this->batteryTechnology;
     }
 
+    /**
+     * @param string $batteryTechnology
+     * @return $this
+     */
     public function setBatteryTechnology(string $batteryTechnology): self
     {
         $this->batteryTechnology = $batteryTechnology;
@@ -75,11 +92,18 @@ class Battery
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getRemovableBattery(): ?string
     {
         return $this->removableBattery;
     }
 
+    /**
+     * @param string $removableBattery
+     * @return $this
+     */
     public function setRemovableBattery(string $removableBattery): self
     {
         $this->removableBattery = $removableBattery;
@@ -87,11 +111,18 @@ class Battery
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getWirelessCharging(): ?string
     {
         return $this->wirelessCharging;
     }
 
+    /**
+     * @param string $wirelessCharging
+     * @return $this
+     */
     public function setWirelessCharging(string $wirelessCharging): self
     {
         $this->wirelessCharging = $wirelessCharging;
@@ -99,11 +130,18 @@ class Battery
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getFastCharge(): ?string
     {
         return $this->fastCharge;
     }
 
+    /**
+     * @param string $fastCharge
+     * @return $this
+     */
     public function setFastCharge(string $fastCharge): self
     {
         $this->fastCharge = $fastCharge;
@@ -111,11 +149,18 @@ class Battery
         return $this;
     }
 
+    /**
+     * @return Smartphone|null
+     */
     public function getSmartphone(): ?Smartphone
     {
         return $this->smartphone;
     }
 
+    /**
+     * @param Smartphone $smartphone
+     * @return $this
+     */
     public function setSmartphone(Smartphone $smartphone): self
     {
         $this->smartphone = $smartphone;

@@ -2,35 +2,34 @@
 
 namespace App\Domain\Services;
 
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * Class SerializerService
+ * @package App\Domain\Services
+ */
 final class SerializerService
 {
 
-    public function serializerHandlingReferences(array $data)
+    /** @var SerializerInterface  */
+    protected $serializer;
+
+    /**
+     * SerializerService constructor.
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(SerializerInterface $serializer)
     {
-        $encoder = new JsonEncoder();
-        $defaultContext = [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
-                return $object->getName();
-            },
-        ];
+        $this->serializer = $serializer;
+    }
 
-        $normalizer = new ObjectNormalizer(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            $defaultContext
-        );
-
-        $serializer = new Serializer([$normalizer], [$encoder]);
-
-        return $serializer->serialize($data, 'json');
+    /**
+     * @param array $data
+     * @param array $groups
+     * @return string
+     */
+    public function serializerHandlingReferences(array $data, array $groups)
+    {
+        return $this->serializer->serialize($data, 'json', $groups);
     }
 }

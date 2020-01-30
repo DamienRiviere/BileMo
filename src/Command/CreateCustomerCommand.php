@@ -2,8 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\Customer;
-use App\Entity\CustomerAddress;
+use App\Domain\Customer\ResolverCustomer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,6 +13,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 final class CreateCustomerCommand extends Command
 {
 
+    /** @var string  */
     protected static $defaultName = 'app:create-customer';
 
     /** @var EntityManagerInterface */
@@ -22,10 +22,23 @@ final class CreateCustomerCommand extends Command
     /** @var UserPasswordEncoderInterface */
     protected $encoder;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
-    {
+    /** @var ResolverCustomer */
+    protected $resolverCustomer;
+
+    /**
+     * CreateCustomerCommand constructor.
+     * @param EntityManagerInterface $em
+     * @param UserPasswordEncoderInterface $encoder
+     * @param ResolverCustomer $resolverCustomer
+     */
+    public function __construct(
+        EntityManagerInterface $em,
+        UserPasswordEncoderInterface $encoder,
+        ResolverCustomer $resolverCustomer
+    ) {
         $this->em = $em;
         $this->encoder = $encoder;
+        $this->resolverCustomer = $resolverCustomer;
 
         parent::__construct();
     }
@@ -38,6 +51,12 @@ final class CreateCustomerCommand extends Command
         ;
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
@@ -67,25 +86,21 @@ final class CreateCustomerCommand extends Command
         $postalCode = $helper->ask($input, $output, $questionPostalCode);
         $phoneNumber = $helper->ask($input, $output, $questionPhoneNumber);
 
-        $customerAddress = new CustomerAddress();
-        $customerAddress
-            ->setStreet($street)
-            ->setCity($city)
-            ->setRegion($region)
-            ->setPostalCode($postalCode)
-            ->setPhoneNumber($phoneNumber);
+        $data = [
+            "email" => $email,
+            "street" => $street,
+            "password" => $password,
+            "organization" => $street,
+            "city" => $city,
+            "region" => $region,
+            "postalCode" => $postalCode,
+            "phoneNumber" => $phoneNumber
+        ];
 
-        $customer = new Customer();
-        $customer
-            ->setEmail($email)
-            ->setPassword($this->encoder->encodePassword($customer, $password))
-            ->setOrganization($organization)
-            ->setCustomerSince(new \DateTime())
-            ->setAddress($customerAddress)
-            ->setRoles("ROLE_USER");
-
-        $this->em->persist($customer);
-        $this->em->flush();
+        $dto = $this->resolverCustomer->createCustomerDTO($data);
+        $customer = $this->resolverCustomer->createCustomer($dto);
+        $customerAddress = $this->resolverCustomer->createCustomerAddress($dto);
+        $this->resolverCustomer->save($customer, $customerAddress);
 
         $output->write("Your customer has been created !");
     }

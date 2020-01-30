@@ -46,16 +46,26 @@ class CustomerAddress
      */
     private $customer;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getStreet(): ?string
     {
         return $this->street;
     }
 
+    /**
+     * @param string $street
+     * @return $this
+     */
     public function setStreet(string $street): self
     {
         $this->street = $street;
@@ -63,11 +73,18 @@ class CustomerAddress
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCity(): ?string
     {
         return $this->city;
     }
 
+    /**
+     * @param string $city
+     * @return $this
+     */
     public function setCity(string $city): self
     {
         $this->city = $city;
@@ -75,11 +92,18 @@ class CustomerAddress
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getRegion(): ?string
     {
         return $this->region;
     }
 
+    /**
+     * @param string $region
+     * @return $this
+     */
     public function setRegion(string $region): self
     {
         $this->region = $region;
@@ -87,11 +111,18 @@ class CustomerAddress
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getPostalCode(): ?int
     {
         return $this->postalCode;
     }
 
+    /**
+     * @param int $postalCode
+     * @return $this
+     */
     public function setPostalCode(int $postalCode): self
     {
         $this->postalCode = $postalCode;
@@ -99,11 +130,18 @@ class CustomerAddress
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getPhoneNumber(): ?int
     {
         return $this->phoneNumber;
     }
 
+    /**
+     * @param int $phoneNumber
+     * @return $this
+     */
     public function setPhoneNumber(int $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
@@ -111,11 +149,18 @@ class CustomerAddress
         return $this;
     }
 
+    /**
+     * @return Customer|null
+     */
     public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
+    /**
+     * @param Customer $customer
+     * @return $this
+     */
     public function setCustomer(Customer $customer): self
     {
         $this->customer = $customer;

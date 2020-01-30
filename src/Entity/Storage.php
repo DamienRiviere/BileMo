@@ -32,16 +32,26 @@ class Storage
      */
     private $smartphone;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCapacity(): ?string
     {
         return $this->capacity;
     }
 
+    /**
+     * @param string $capacity
+     * @return $this
+     */
     public function setCapacity(string $capacity): self
     {
         $this->capacity = $capacity;
@@ -49,11 +59,18 @@ class Storage
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPrice(): ?string
     {
         return $this->price;
     }
 
+    /**
+     * @param string $price
+     * @return $this
+     */
     public function setPrice(string $price): self
     {
         $this->price = $price;
@@ -61,11 +78,18 @@ class Storage
         return $this;
     }
 
+    /**
+     * @return Smartphone|null
+     */
     public function getSmartphone(): ?Smartphone
     {
         return $this->smartphone;
     }
 
+    /**
+     * @param Smartphone|null $smartphone
+     * @return $this
+     */
     public function setSmartphone(?Smartphone $smartphone): self
     {
         $this->smartphone = $smartphone;
