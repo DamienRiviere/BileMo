@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class ShowDetailsProduct
+ * Class ShowProductDetails
  * @package App\Actions
  *
  * @Route("api/products/{id}", name="api_products_details", methods={"GET"})
  */
-final class ShowDetailsProduct
+final class ShowProductDetails
 {
 
     /** @var SmartphoneRepository */
@@ -24,7 +24,7 @@ final class ShowDetailsProduct
     protected $serializer;
 
     /**
-     * ShowDetailsProduct constructor.
+     * ShowProductDetails constructor.
      * @param SerializerService $serializer
      * @param SmartphoneRepository $smartphoneRepo
      */
