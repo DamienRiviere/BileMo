@@ -41,7 +41,7 @@ final class ShowProducts
     public function __invoke(JsonResponder $responder): Response
     {
         $products =  $this->smartRepo->findAll();
-        $data = $this->serializer->serializerHandlingReferences($products, ['groups' => ['showProducts']]);
+        $data = $this->serializer->serializer($products, ['groups' => ['showProducts']]);
 
         return $responder($data, Response::HTTP_OK);
     }

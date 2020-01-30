@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DisplayRepository")
@@ -18,16 +19,19 @@ class Display
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showProductsDetails"})
      */
     private $type;
 
