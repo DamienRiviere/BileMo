@@ -24,35 +24,41 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showUsers"})
+     * @Groups({"showUserDetails"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showUsers"})
+     * @Groups({"showUserDetails"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showUsers"})
+     * @Groups({"showUserDetails"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showUsers"})
+     * @Groups({"showUserDetails"})
      */
     private $slug;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"showUsers"})
+     * @Groups({"showUserDetails"})
      */
     private $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserAddress", mappedBy="user", orphanRemoval=true, cascade={"persist"})
+     * @Groups({"showUserDetails"})
      */
     private $address;
 

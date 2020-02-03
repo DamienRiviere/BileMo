@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Domain\Services\GenerateUrl;
 use App\Domain\Services\Validator;
 use App\Domain\User\ResolverUser;
 use App\Entity\Customer;
@@ -25,15 +26,19 @@ final class NewUser
     /** @var Validator */
     protected $validator;
 
+    /** @var GenerateUrl */
+    protected $url;
+
     /**
      * NewUser constructor.
      * @param ResolverUser $resolverUser
      * @param Validator $validator
      */
-    public function __construct(ResolverUser $resolverUser, Validator $validator)
+    public function __construct(ResolverUser $resolverUser, Validator $validator, GenerateUrl $url)
     {
         $this->resolverUser = $resolverUser;
         $this->validator = $validator;
+        $this->url = $url;
     }
 
     /**
@@ -51,8 +56,18 @@ final class NewUser
             return $responder($errors, Response::HTTP_BAD_REQUEST);
         }
 
-        $this->resolverUser->save($dto, $customer);
+        $user = $this->resolverUser->save($dto, $customer);
 
-        return $responder(null, Response::HTTP_CREATED);
+        return $responder(
+            null,
+            Response::HTTP_CREATED,
+            $this->url->generateHeader(
+                "api_show_users_details",
+                [
+                    "idCustomer" => $customer->getId(),
+                    "idUser" => $user->getId()
+                ]
+            )
+        );
     }
 }

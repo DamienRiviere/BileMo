@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserAddressRepository")
@@ -18,26 +19,31 @@ class UserAddress
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showUserDetails"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showUserDetails"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"showUserDetails"})
      */
     private $region;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"showUserDetails"})
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"showUserDetails"})
      */
     private $phoneNumber;
 
