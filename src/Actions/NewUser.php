@@ -33,6 +33,7 @@ final class NewUser
      * NewUser constructor.
      * @param ResolverUser $resolverUser
      * @param Validator $validator
+     * @param GenerateUrl $url
      */
     public function __construct(ResolverUser $resolverUser, Validator $validator, GenerateUrl $url)
     {

@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Entity\UserAddress;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class ResolverUser
@@ -19,25 +18,19 @@ final class ResolverUser
     /** @var EntityManagerInterface */
     protected $em;
 
-    /** @var ValidatorInterface */
-    protected $validator;
-
     /** @var SerializerInterface  */
     protected $serializer;
 
     /**
      * ResolverUser constructor.
      * @param EntityManagerInterface $em
-     * @param ValidatorInterface $validator
      * @param SerializerInterface $serializer
      */
     public function __construct(
         EntityManagerInterface $em,
-        ValidatorInterface $validator,
         SerializerInterface $serializer
     ) {
         $this->em = $em;
-        $this->validator = $validator;
         $this->serializer = $serializer;
     }
 
@@ -57,6 +50,15 @@ final class ResolverUser
         $this->em->flush();
 
         return $user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function delete(User $user)
+    {
+        $this->em->remove($user);
+        $this->em->flush();
     }
 
     /**
