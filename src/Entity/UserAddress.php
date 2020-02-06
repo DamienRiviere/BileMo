@@ -19,31 +19,31 @@ class UserAddress
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUserAddress"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUserAddress"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUserAddress"})
      */
     private $region;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUserAddress"})
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUserAddress"})
      */
     private $phoneNumber;
 

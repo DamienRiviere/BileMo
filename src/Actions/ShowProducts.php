@@ -41,7 +41,17 @@ final class ShowProducts
     public function __invoke(JsonResponder $responder): Response
     {
         $products =  $this->smartRepo->findAll();
-        $data = $this->serializer->serializer($products, ['groups' => ['showProducts']]);
+        $data = $this->serializer->serializer($products, ['groups' => ['showProduct', 'listProduct']]);
+
+        if (is_null($products)) {
+            return $responder(
+                [
+                    "status" => "404 Ressource introuvable",
+                    "message" => "Liste des produits introuvable !"
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $responder($data, Response::HTTP_OK);
     }

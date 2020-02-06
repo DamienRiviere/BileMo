@@ -23,42 +23,36 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUsers"})
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUser"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUsers"})
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUser"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUsers"})
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUser"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showUsers"})
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUser"})
      */
     private $slug;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"showUsers"})
-     * @Groups({"showUserDetails"})
+     * @Groups({"showUser"})
      */
     private $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserAddress", mappedBy="user", orphanRemoval=true, cascade={"persist"})
-     * @Groups({"showUserDetails"})
      */
     private $address;
 
@@ -81,7 +75,8 @@ class User
     {
         if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName, $this->lastName);
+            $slug = $this->firstName . " " . $this->getLastName();
+            $this->slug = $slugify->slugify($slug);
         }
     }
 

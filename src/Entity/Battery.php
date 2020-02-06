@@ -19,31 +19,31 @@ class Battery
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showBattery"})
      */
     private $capacity;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showBattery"})
      */
     private $batteryTechnology;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showBattery"})
      */
     private $removableBattery;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showBattery"})
      */
     private $wirelessCharging;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showBattery"})
      */
     private $fastCharge;
 

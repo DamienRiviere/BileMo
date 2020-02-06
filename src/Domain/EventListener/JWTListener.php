@@ -21,8 +21,8 @@ final class JWTListener
     public function onJWTInvalid(JWTInvalidEvent $event)
     {
         $response = new JWTAuthenticationFailureResponse(
-            "Votre token est invalide, merci de vous réidentifier pour en obtenir un nouveau",
-            403
+            "Votre token est invalide, merci de vous réidentifier pour en obtenir un nouveau !",
+            401
         );
 
         $event->setResponse($response);
@@ -34,11 +34,11 @@ final class JWTListener
     public function onJWTNotFound(JWTNotFoundEvent $event)
     {
         $data = [
-            'status' => '403 Interdit',
-            'message' => 'Aucun token'
+            'status' => '401 Authentification nécessaire',
+            'message' => 'Aucun token !'
         ];
 
-        $response = new JsonResponse($data, 403);
+        $response = new JsonResponse($data, 401);
         $event->setResponse($response);
     }
 
@@ -48,6 +48,7 @@ final class JWTListener
     public function onJWTExpired(JWTExpiredEvent $event)
     {
         $response = $event->getResponse();
-        $response->setMessage("Votre token a expiré, veuillez vous réidentifier");
+        $response->setStatusCode(401);
+        $response->setMessage("Votre token a expiré, veuillez vous réidentifier !");
     }
 }
