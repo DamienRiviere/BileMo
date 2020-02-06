@@ -19,19 +19,19 @@ class Display
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showDisplay"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showDisplay"})
      */
     private $resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showDisplay"})
      */
     private $type;
 

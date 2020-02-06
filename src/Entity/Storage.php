@@ -19,13 +19,13 @@ class Storage
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showStorage"})
      */
     private $capacity;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showStorage"})
      */
     private $price;
 

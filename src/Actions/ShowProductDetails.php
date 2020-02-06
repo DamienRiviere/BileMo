@@ -42,7 +42,17 @@ final class ShowProductDetails
     public function __invoke(JsonResponder $responder, int $id): Response
     {
         $smartphone = $this->smartphoneRepo->findOneBy(['id' => $id]);
-        $data = $this->serializer->serializer($smartphone, ['groups' => ['showProductsDetails']]);
+        $data = $this->serializer->serializer($smartphone, ['groups' => ['showProduct', 'productDetails']]);
+
+        if (is_null($smartphone)) {
+            return $responder(
+                [
+                    "status" => "404 Ressource introuvable",
+                    "message" => "Smartphone introuvable !"
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $responder($data, Response::HTTP_OK);
     }

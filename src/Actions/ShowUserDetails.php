@@ -42,7 +42,17 @@ final class ShowUserDetails
                 'id' => $idUser
             ]
         );
-        $data = $this->serializer->serializer($user, ['groups' => ['showUserDetails']]);
+        $data = $this->serializer->serializer($user, ['groups' => ['showUser', 'userDetails']]);
+
+        if (is_null($user)) {
+            return $responder(
+                [
+                    "status" => "404 Ressource introuvable",
+                    "message" => "Utilisateur introuvable !"
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $responder($data, Response::HTTP_OK);
     }

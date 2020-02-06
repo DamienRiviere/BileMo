@@ -21,91 +21,82 @@ class Smartphone
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $os;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $dimensions;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $weight;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $processor;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $gpu;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $ram;
 
     /**
      * @ORM\Column(type="array")
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $colors = [];
 
     /**
      * @ORM\Column(type="array")
-     * @Groups({"showProducts"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"showProduct"})
      */
     private $ports = [];
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Display", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"display"})
      */
     private $display;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Storage", mappedBy="smartphone", orphanRemoval=true, cascade={"persist"})
-     * @Groups({"showProductsDetails"})
+     * @Groups({"storage"})
      */
     private $storage;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Camera", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"camera"})
      */
     private $camera;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Battery", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"showProductsDetails"})
+     * @Groups({"battery"})
      */
     private $battery;
 

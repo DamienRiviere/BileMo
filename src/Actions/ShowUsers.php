@@ -43,7 +43,17 @@ final class ShowUsers
     public function __invoke(JsonResponder $responder, Customer $customer): Response
     {
         $users = $this->userRepo->findBy(['customer' => $customer]);
-        $data = $this->serializer->serializer($users, ['groups' => ['showUsers']]);
+        $data = $this->serializer->serializer($users, ['groups' => ['showUser', 'listUser']]);
+
+        if (is_null($users)) {
+            return $responder(
+                [
+                    "status" => "404 Ressource introuvable",
+                    "message" => "Liste des utilisateurs introuvable !"
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
 
         return $responder($data, Response::HTTP_OK);
     }
