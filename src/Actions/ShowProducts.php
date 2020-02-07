@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Domain\Services\SerializerService;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,13 +36,26 @@ final class ShowProducts
     }
 
     /**
+     * @param Request $request
      * @param JsonResponder $responder
      * @return Response
      */
-    public function __invoke(JsonResponder $responder): Response
+    public function __invoke(Request $request, JsonResponder $responder): Response
     {
-        $products =  $this->smartRepo->findAll();
-        $data = $this->serializer->serializer($products, ['groups' => ['showProduct', 'listProduct']]);
+        $page = $request->query->getInt('page');
+
+        if (is_null($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $products =  $this->smartRepo->findAllSmartphone($page);
+        $data = $this->serializer->serializer(
+            $products,
+            [
+                'groups' => ['showProduct', 'listProduct',],
+                'page' => $page
+            ]
+        );
 
         if (is_null($products)) {
             return $responder(

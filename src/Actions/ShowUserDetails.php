@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class ShowUserDetails
  * @package App\Actions
  *
- * @Route("api/customers/{idCustomer}/users/{idUser}", name="api_show_users_details", methods={"GET"})
+ * @Route("api/customers/{idCustomer}/users/{idUser}", name="api_show_user_details", methods={"GET"})
  */
 final class ShowUserDetails
 {

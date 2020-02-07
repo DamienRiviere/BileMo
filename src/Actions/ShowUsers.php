@@ -6,6 +6,7 @@ use App\Domain\Services\SerializerService;
 use App\Entity\Customer;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,14 +37,28 @@ final class ShowUsers
     }
 
     /**
+     * @param Request $request
      * @param JsonResponder $responder
      * @param Customer $customer
      * @return Response
      */
-    public function __invoke(JsonResponder $responder, Customer $customer): Response
+    public function __invoke(Request $request, JsonResponder $responder, Customer $customer): Response
     {
-        $users = $this->userRepo->findBy(['customer' => $customer]);
-        $data = $this->serializer->serializer($users, ['groups' => ['showUser', 'listUser']]);
+        $page = $request->query->getInt('page');
+
+        if (is_null($page) || $page < 1) {
+            $page = 1;
+        }
+
+        $users = $this->userRepo->findAllUser($page, $customer);
+        $data = $this->serializer->serializer(
+            $users,
+            [
+                'groups' => ['showUser', 'listUser'],
+                'page' => $page,
+                'customer' => $customer
+            ]
+        );
 
         if (is_null($users)) {
             return $responder(

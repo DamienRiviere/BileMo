@@ -12,6 +12,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Smartphone
 {
+
+    public const LIMIT_PER_PAGE = 10;
+    public const SHOW_PRODUCT_DETAILS = 'api_product_details';
+    public const SHOW_PRODUCTS = 'api_show_products';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
