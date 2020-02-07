@@ -1,5 +1,0 @@
-App\Entity\Display:
-  display:
-    size: '<word()>'
-    resolution: '<word()>'
-    type: '<word()>'
