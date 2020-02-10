@@ -14,6 +14,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User
 {
+
+    public const LIMIT_PER_PAGE = 10;
+    public const SHOW_USER_DETAILS = 'api_show_user_details';
+    public const SHOW_USERS = 'api_show_users';
+    public const DELETE_USER = 'api_delete_user';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

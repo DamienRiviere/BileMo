@@ -2,9 +2,12 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\PaginationHelper;
 use App\Domain\Services\SerializerService;
+use App\Entity\Smartphone;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,35 +26,46 @@ final class ShowProducts
     /** @var SerializerService */
     protected $serializer;
 
+    /** @var PaginationHelper */
+    protected $paginationHelper;
+
     /**
      * ShowProducts constructor.
      * @param SmartphoneRepository $smartRepo
      * @param SerializerService $serializer
+     * @param PaginationHelper $paginationHelper
      */
-    public function __construct(SmartphoneRepository $smartRepo, SerializerService $serializer)
-    {
+    public function __construct(
+        SmartphoneRepository $smartRepo,
+        SerializerService $serializer,
+        PaginationHelper $paginationHelper
+    ) {
         $this->smartRepo = $smartRepo;
         $this->serializer = $serializer;
+        $this->paginationHelper = $paginationHelper;
     }
 
     /**
+     * @param Request $request
      * @param JsonResponder $responder
      * @return Response
      */
-    public function __invoke(JsonResponder $responder): Response
+    public function __invoke(Request $request, JsonResponder $responder): Response
     {
-        $products =  $this->smartRepo->findAll();
-        $data = $this->serializer->serializer($products, ['groups' => ['showProduct', 'listProduct']]);
+        $page = $this->paginationHelper->checkPage($request, $this->smartRepo->findAll(), Smartphone::LIMIT_PER_PAGE);
 
-        if (is_null($products)) {
-            return $responder(
-                [
-                    "status" => "404 Ressource introuvable",
-                    "message" => "Liste des produits introuvable !"
-                ],
-                Response::HTTP_NOT_FOUND
-            );
+        if (is_array($page)) {
+            return $responder($page, Response::HTTP_NOT_FOUND);
         }
+
+        $products =  $this->smartRepo->findAllSmartphone($page, $request->query->get('filter'));
+        $data = $this->serializer->serializer(
+            $products,
+            [
+                'groups' => ['showProduct', 'listProduct',],
+                'page' => $page
+            ]
+        );
 
         return $responder($data, Response::HTTP_OK);
     }

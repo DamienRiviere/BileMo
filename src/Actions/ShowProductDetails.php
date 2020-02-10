@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class ShowProductDetails
  * @package App\Actions
  *
- * @Route("api/products/{id}", name="api_products_details", methods={"GET"})
+ * @Route("api/products/{id}", name="api_product_details", methods={"GET"})
  */
 final class ShowProductDetails
 {

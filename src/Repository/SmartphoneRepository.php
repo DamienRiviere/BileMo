@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Smartphone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method Smartphone|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,21 @@ class SmartphoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Smartphone::class);
     }
 
-    // /**
-    //  * @return Smartphone[] Returns an array of Smartphone objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAllSmartphone(int $page, $filter = '', int $limit = Smartphone::LIMIT_PER_PAGE)
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+        $query = $this->createQueryBuilder('s')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
         ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Smartphone
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if ($filter) {
+            $query->where('s.name LIKE :filter OR s.os LIKE :filter')
+                  ->setParameter('filter', '%' . $filter . '%')
+            ;
+        }
+
+        $query->getQuery();
+
+        return new Paginator($query);
     }
-    */
 }

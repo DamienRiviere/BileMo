@@ -2,28 +2,33 @@
 
 namespace App\Domain\Product\Normalizer;
 
+use App\Domain\Services\Hateoas;
+use App\Domain\Services\Pagination;
 use App\Entity\Smartphone;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Exception\CircularReferenceException;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
+use App\Repository\SmartphoneRepository;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 final class ProductsNormalizer implements ContextAwareNormalizerInterface
 {
 
-    /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-
     /** @var ObjectNormalizer */
     protected $normalizer;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, ObjectNormalizer $normalizer)
-    {
+    /** @var SmartphoneRepository */
+    protected $smartphoneRepo;
+
+    /** @var Hateoas */
+    protected $hateoas;
+
+    public function __construct(
+        ObjectNormalizer $normalizer,
+        SmartphoneRepository $smartphoneRepo,
+        Hateoas $hateoas
+    ) {
         $this->normalizer = $normalizer;
-        $this->urlGenerator = $urlGenerator;
+        $this->smartphoneRepo = $smartphoneRepo;
+        $this->hateoas = $hateoas;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = [])
@@ -31,38 +36,121 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data instanceof Smartphone && in_array('listProduct', $context['groups']);
     }
 
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = []): array
     {
         $data = $this->normalizer->normalize($object, $format, $context);
-
-        $data['_link']['self']['href'] = $this->urlGenerator->generate(
-            'api_products_details',
-            ['id' => $object->getId()]
+        $pagination = new Pagination(
+            Smartphone::LIMIT_PER_PAGE,
+            $this->smartphoneRepo->findAll(),
+            $context['page']
         );
 
-        $data['_embedded']['display'] = $this->normalizer->normalize(
-            $object->getDisplay(),
-            $format,
-            ['groups' => ['display']]
+        // _link
+        $data = $this->getSelfLink($data, $object);
+        $data = $this->getFirstPageLink($data, $pagination);
+        $data = $this->getLastPageLink($data, $pagination);
+
+        if ($context['page'] < $pagination->getPages()) {
+            $data = $this->getNextPageLink($data, $pagination);
+        }
+
+        if ($context['page'] >= 2) {
+            $data = $this->getPreviousPageLink($data, $pagination);
+        }
+
+        // _embedded
+        $data = $this->getEmbeddedDisplay($data, $object);
+        $data = $this->getEmbeddedBattery($data, $object);
+        $data = $this->getEmbeddedCamera($data, $object);
+        $data = $this->getEmbeddedStorage($data, $object);
+
+        return $data;
+    }
+
+    public function getSelfLink(array $data, Smartphone $object): array
+    {
+        $data = $this->hateoas->setLink(
+            $data,
+            Smartphone::SHOW_PRODUCT_DETAILS,
+            ['id' => $object->getId()],
+            'self'
         );
 
-        $data['_embedded']['battery'] = $this->normalizer->normalize(
-            $object->getBattery(),
-            $format,
-            ['groups' => ['battery']]
+        return $data;
+    }
+
+    public function getFirstPageLink(array $data, Pagination $pagination): array
+    {
+        $data = $this->hateoas->setLink(
+            $data,
+            Smartphone::SHOW_PRODUCTS,
+            ['page' => $pagination->getFirstPage()],
+            'first'
         );
 
-        $data['_embedded']['camera'] = $this->normalizer->normalize(
-            $object->getCamera(),
-            $format,
-            ['groups' => ['camera']]
+        return $data;
+    }
+
+    public function getLastPageLink(array $data, Pagination $pagination): array
+    {
+        $data = $this->hateoas->setLink(
+            $data,
+            Smartphone::SHOW_PRODUCTS,
+            ['page' => $pagination->getLastPage()],
+            'last'
         );
 
-        $data['_embedded']['storage'] = $this->normalizer->normalize(
-            $object->getStorage(),
-            $format,
-            ['groups' => ['storage']]
+        return $data;
+    }
+
+    public function getNextPageLink(array $data, Pagination $pagination): array
+    {
+        $data = $this->hateoas->setLink(
+            $data,
+            Smartphone::SHOW_PRODUCTS,
+            ['page' => $pagination->getNextPage()],
+            'next'
         );
+
+        return $data;
+    }
+
+    public function getPreviousPageLink(array $data, Pagination $pagination): array
+    {
+        $data = $this->hateoas->setLink(
+            $data,
+            Smartphone::SHOW_PRODUCTS,
+            ['page' => $pagination->getPreviousPage()],
+            'prev'
+        );
+
+        return $data;
+    }
+
+    public function getEmbeddedDisplay(array $data, Smartphone $object): array
+    {
+        $data = $this->hateoas->setEmbedded($data, $object->getDisplay(), 'display', 'display');
+
+        return $data;
+    }
+
+    public function getEmbeddedBattery(array $data, Smartphone $object): array
+    {
+        $data = $this->hateoas->setEmbedded($data, $object->getBattery(), 'battery', 'battery');
+
+        return $data;
+    }
+
+    public function getEmbeddedCamera(array $data, Smartphone $object): array
+    {
+        $data = $this->hateoas->setEmbedded($data, $object->getCamera(), 'camera', 'camera');
+
+        return $data;
+    }
+
+    public function getEmbeddedStorage(array $data, Smartphone $object): array
+    {
+        $data = $this->hateoas->setEmbedded($data, $object->getStorage(), 'storage', 'storage');
 
         return $data;
     }

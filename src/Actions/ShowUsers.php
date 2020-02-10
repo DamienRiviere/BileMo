@@ -2,10 +2,13 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\PaginationHelper;
 use App\Domain\Services\SerializerService;
 use App\Entity\Customer;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,36 +27,52 @@ final class ShowUsers
     /** @var SerializerService */
     protected $serializer;
 
+    /** @var PaginationHelper */
+    protected $paginationHelper;
+
     /**
      * ShowUsers constructor.
      * @param UserRepository $userRepo
      * @param SerializerService $serializer
+     * @param PaginationHelper $paginationHelper
      */
-    public function __construct(UserRepository $userRepo, SerializerService $serializer)
-    {
+    public function __construct(
+        UserRepository $userRepo,
+        SerializerService $serializer,
+        PaginationHelper $paginationHelper
+    ) {
         $this->userRepo = $userRepo;
         $this->serializer = $serializer;
+        $this->paginationHelper = $paginationHelper;
     }
 
     /**
+     * @param Request $request
      * @param JsonResponder $responder
      * @param Customer $customer
      * @return Response
      */
-    public function __invoke(JsonResponder $responder, Customer $customer): Response
+    public function __invoke(Request $request, JsonResponder $responder, Customer $customer): Response
     {
-        $users = $this->userRepo->findBy(['customer' => $customer]);
-        $data = $this->serializer->serializer($users, ['groups' => ['showUser', 'listUser']]);
+        $page = $this->paginationHelper->checkPage(
+            $request,
+            $this->userRepo->findByCustomer($customer),
+            User::LIMIT_PER_PAGE
+        );
 
-        if (is_null($users)) {
-            return $responder(
-                [
-                    "status" => "404 Ressource introuvable",
-                    "message" => "Liste des utilisateurs introuvable !"
-                ],
-                Response::HTTP_NOT_FOUND
-            );
+        if (is_array($page)) {
+            return $responder($page, Response::HTTP_NOT_FOUND);
         }
+
+        $users = $this->userRepo->findAllUser($page, $customer, $request->query->get('filter'));
+        $data = $this->serializer->serializer(
+            $users,
+            [
+                'groups' => ['showUser', 'listUser'],
+                'page' => $page,
+                'customer' => $customer
+            ]
+        );
 
         return $responder($data, Response::HTTP_OK);
     }
