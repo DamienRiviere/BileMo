@@ -2,8 +2,10 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\PaginationHelper;
 use App\Domain\Services\SerializerService;
 use App\Entity\Customer;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,15 +27,23 @@ final class ShowUsers
     /** @var SerializerService */
     protected $serializer;
 
+    /** @var PaginationHelper */
+    protected $paginationHelper;
+
     /**
      * ShowUsers constructor.
      * @param UserRepository $userRepo
      * @param SerializerService $serializer
+     * @param PaginationHelper $paginationHelper
      */
-    public function __construct(UserRepository $userRepo, SerializerService $serializer)
-    {
+    public function __construct(
+        UserRepository $userRepo,
+        SerializerService $serializer,
+        PaginationHelper $paginationHelper
+    ) {
         $this->userRepo = $userRepo;
         $this->serializer = $serializer;
+        $this->paginationHelper = $paginationHelper;
     }
 
     /**
@@ -44,13 +54,17 @@ final class ShowUsers
      */
     public function __invoke(Request $request, JsonResponder $responder, Customer $customer): Response
     {
-        $page = $request->query->getInt('page');
+        $page = $this->paginationHelper->checkPage(
+            $request,
+            $this->userRepo->findByCustomer($customer),
+            User::LIMIT_PER_PAGE
+        );
 
-        if (is_null($page) || $page < 1) {
-            $page = 1;
+        if (is_array($page)) {
+            return $responder($page, Response::HTTP_NOT_FOUND);
         }
 
-        $users = $this->userRepo->findAllUser($page, $customer);
+        $users = $this->userRepo->findAllUser($page, $customer, $request->query->get('filter'));
         $data = $this->serializer->serializer(
             $users,
             [
@@ -59,16 +73,6 @@ final class ShowUsers
                 'customer' => $customer
             ]
         );
-
-        if (is_null($users)) {
-            return $responder(
-                [
-                    "status" => "404 Ressource introuvable",
-                    "message" => "Liste des utilisateurs introuvable !"
-                ],
-                Response::HTTP_NOT_FOUND
-            );
-        }
 
         return $responder($data, Response::HTTP_OK);
     }

@@ -20,13 +20,20 @@ class SmartphoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Smartphone::class);
     }
 
-    public function findAllSmartphone(int $page, int $limit = Smartphone::LIMIT_PER_PAGE)
+    public function findAllSmartphone(int $page, $filter = '', int $limit = Smartphone::LIMIT_PER_PAGE)
     {
         $query = $this->createQueryBuilder('s')
-            ->getQuery()
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
         ;
+
+        if ($filter) {
+            $query->where('s.name LIKE :filter OR s.os LIKE :filter')
+                  ->setParameter('filter', '%' . $filter . '%')
+            ;
+        }
+
+        $query->getQuery();
 
         return new Paginator($query);
     }

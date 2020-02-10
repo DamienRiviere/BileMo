@@ -23,20 +23,43 @@ class UserRepository extends ServiceEntityRepository
 
     /**
      * @param int $page
-     * @param int $limit
      * @param Customer $customer
+     * @param string $filter
+     * @param int $limit
      * @return Paginator
      */
-    public function findAllUser(int $page, Customer $customer, int $limit = User::LIMIT_PER_PAGE)
+    public function findAllUser(int $page, Customer $customer, $filter = '', int $limit = User::LIMIT_PER_PAGE)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where('u.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+        ;
+
+        if ($filter) {
+            $query->andWhere('u.email LIKE :filter OR u.slug LIKE :filter')
+                  ->setParameter('filter', '%' . $filter . '%')
+            ;
+        }
+
+        $query->getQuery();
+
+        return new Paginator($query);
+    }
+
+    /**
+     * @param Customer $customer
+     * @return array
+     */
+    public function findByCustomer(Customer $customer): array
     {
         $query = $this->createQueryBuilder('u')
             ->where('u.customer = :customer')
             ->setParameter('customer', $customer)
             ->getQuery()
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
         ;
 
-        return new Paginator($query);
+        return $query->getResult();
     }
 }

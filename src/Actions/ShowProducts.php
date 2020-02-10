@@ -2,7 +2,9 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\PaginationHelper;
 use App\Domain\Services\SerializerService;
+use App\Entity\Smartphone;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,15 +26,23 @@ final class ShowProducts
     /** @var SerializerService */
     protected $serializer;
 
+    /** @var PaginationHelper */
+    protected $paginationHelper;
+
     /**
      * ShowProducts constructor.
      * @param SmartphoneRepository $smartRepo
      * @param SerializerService $serializer
+     * @param PaginationHelper $paginationHelper
      */
-    public function __construct(SmartphoneRepository $smartRepo, SerializerService $serializer)
-    {
+    public function __construct(
+        SmartphoneRepository $smartRepo,
+        SerializerService $serializer,
+        PaginationHelper $paginationHelper
+    ) {
         $this->smartRepo = $smartRepo;
         $this->serializer = $serializer;
+        $this->paginationHelper = $paginationHelper;
     }
 
     /**
@@ -42,13 +52,13 @@ final class ShowProducts
      */
     public function __invoke(Request $request, JsonResponder $responder): Response
     {
-        $page = $request->query->getInt('page');
+        $page = $this->paginationHelper->checkPage($request, $this->smartRepo->findAll(), Smartphone::LIMIT_PER_PAGE);
 
-        if (is_null($page) || $page < 1) {
-            $page = 1;
+        if (is_array($page)) {
+            return $responder($page, Response::HTTP_NOT_FOUND);
         }
 
-        $products =  $this->smartRepo->findAllSmartphone($page);
+        $products =  $this->smartRepo->findAllSmartphone($page, $request->query->get('filter'));
         $data = $this->serializer->serializer(
             $products,
             [
@@ -56,16 +66,6 @@ final class ShowProducts
                 'page' => $page
             ]
         );
-
-        if (is_null($products)) {
-            return $responder(
-                [
-                    "status" => "404 Ressource introuvable",
-                    "message" => "Liste des produits introuvable !"
-                ],
-                Response::HTTP_NOT_FOUND
-            );
-        }
 
         return $responder($data, Response::HTTP_OK);
     }
