@@ -5,6 +5,9 @@ namespace App\Actions;
 use App\Domain\Services\SerializerService;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,6 +38,27 @@ final class ShowProductDetails
     }
 
     /**
+     * Show smartphone details
+     *
+     * @SWG\Response(
+     *     response="200",
+     *     description="Return product details."
+     * )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Return a 404 not found if the product don't exist",
+     *     examples={"status": "404 Ressource introuvable", "message": "Smartphone introuvable !"}
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="ID of the product.",
+     *     required=true
+     * )
+     * @SWG\Tag(name="product")
+     * @Security(name="Bearer")
+     *
      * @param JsonResponder $responder
      * @param int $id
      * @return Response

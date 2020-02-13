@@ -7,6 +7,8 @@ use App\Domain\Services\Validator;
 use App\Domain\User\ResolverUser;
 use App\Entity\Customer;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,6 +45,26 @@ final class NewUser
     }
 
     /**
+     * Create a new user
+     *
+     * @SWG\Response(
+     *     response="201",
+     *     description="Create a new user for a customer."
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Show errors validation."
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="Unique identifier of the customer",
+     *     required=true
+     * )
+     * @SWG\Tag(name="user")
+     * @Security(name="Bearer")
+     *
      * @param Request $request
      * @param Customer $customer
      * @param JsonResponder $responder

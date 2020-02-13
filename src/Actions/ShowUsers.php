@@ -8,6 +8,9 @@ use App\Entity\Customer;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,6 +50,42 @@ final class ShowUsers
     }
 
     /**
+     * Show users of a customer
+     *
+     * @SWG\Response(
+     *     response="200",
+     *     description="Return all users of a customer.",
+     *     @Model(type=User::class, groups={"showUser"})
+     * )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Return a 404 not found if the page parameter don't exist.",
+     *     examples={"status": "404 Ressource introuvable", "message": "Liste introuvable !"}
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="Unique identifier of the customer.",
+     *     required=true
+     * )
+     * @SWG\Parameter(
+     *     name="page",
+     *     in="path",
+     *     type="integer",
+     *     description="Page of the list.",
+     *     required=false
+     * )
+     * @SWG\Parameter(
+     *     name="filter",
+     *     in="path",
+     *     type="string",
+     *     description="Filter by slug or email of the user.",
+     *     required=false
+     * )
+     * @SWG\Tag(name="user")
+     * @Security(name="Bearer")
+     *
      * @param Request $request
      * @param JsonResponder $responder
      * @param Customer $customer
