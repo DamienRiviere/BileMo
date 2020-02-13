@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\AuthorizationHelper;
 use App\Domain\Helpers\PaginationHelper;
 use App\Domain\Services\SerializerService;
 use App\Entity\Customer;
@@ -11,6 +12,7 @@ use App\Responder\JsonResponder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class ShowUsers
@@ -30,20 +32,32 @@ final class ShowUsers
     /** @var PaginationHelper */
     protected $paginationHelper;
 
+    /** @var AuthorizationCheckerInterface */
+    protected $authorization;
+
+    /** @var AuthorizationHelper */
+    protected $authorizationHelper;
+
     /**
      * ShowUsers constructor.
      * @param UserRepository $userRepo
      * @param SerializerService $serializer
      * @param PaginationHelper $paginationHelper
+     * @param AuthorizationCheckerInterface $authorization
+     * @param AuthorizationHelper $authorizationHelper
      */
     public function __construct(
         UserRepository $userRepo,
         SerializerService $serializer,
-        PaginationHelper $paginationHelper
+        PaginationHelper $paginationHelper,
+        AuthorizationCheckerInterface $authorization,
+        AuthorizationHelper $authorizationHelper
     ) {
         $this->userRepo = $userRepo;
         $this->serializer = $serializer;
         $this->paginationHelper = $paginationHelper;
+        $this->authorization = $authorization;
+        $this->authorizationHelper = $authorizationHelper;
     }
 
     /**
@@ -54,11 +68,14 @@ final class ShowUsers
      */
     public function __invoke(Request $request, JsonResponder $responder, Customer $customer): Response
     {
-        $page = $this->paginationHelper->checkPage(
-            $request,
-            $this->userRepo->findByCustomer($customer),
-            User::LIMIT_PER_PAGE
-        );
+        $users = $this->userRepo->findByCustomer($customer);
+        $authorization = $this->authorization->isGranted('view', $users);
+
+        if (!$authorization) {
+            return $responder($this->authorizationHelper->checkAccess($authorization), Response::HTTP_FORBIDDEN);
+        }
+
+        $page = $this->paginationHelper->checkPage($request, $users, User::LIMIT_PER_PAGE);
 
         if (is_array($page)) {
             return $responder($page, Response::HTTP_NOT_FOUND);
