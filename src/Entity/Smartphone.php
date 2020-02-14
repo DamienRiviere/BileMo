@@ -5,8 +5,6 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -23,76 +21,60 @@ class Smartphone
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @SWG\Property(description="The unique identifier of the smartphone.")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $os;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $dimensions;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $weight;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $processor;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $gpu;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"showProduct"})
-     * @SWG\Property(type="string", maxLength=255)
      */
     private $ram;
 
     /**
      * @ORM\Column(type="array")
      * @Groups({"showProduct"})
-     * @SWG\Property(
-     *     type="array",
-     *     @SWG\Items(type="string")
-     * )
      */
     private $colors = [];
 
     /**
      * @ORM\Column(type="array")
      * @Groups({"showProduct"})
-     * @SWG\Property(
-     *     type="array",
-     *     @SWG\Items(type="string")
-     * )
      */
     private $ports = [];
 
@@ -100,14 +82,12 @@ class Smartphone
      * @ORM\OneToOne(targetEntity="App\Entity\Display", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"display"})
-     * @SWG\Property(ref=@Model(type=Display::class))
      */
     private $display;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Storage", mappedBy="smartphone", orphanRemoval=true, cascade={"persist"})
      * @Groups({"storage"})
-     * @SWG\Property(ref=@Model(type=Storage::class))
      */
     private $storage;
 
@@ -115,7 +95,6 @@ class Smartphone
      * @ORM\OneToOne(targetEntity="App\Entity\Camera", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"camera"})
-     * @SWG\Property(ref=@Model(type=Camera::class))
      */
     private $camera;
 
@@ -123,7 +102,6 @@ class Smartphone
      * @ORM\OneToOne(targetEntity="App\Entity\Battery", inversedBy="smartphone", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"battery"})
-     * @SWG\Property(ref=@Model(type=Battery::class))
      */
     private $battery;
 

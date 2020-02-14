@@ -47,24 +47,6 @@ final class NewUser
     /**
      * Create a new user
      *
-     * @SWG\Response(
-     *     response="201",
-     *     description="Create a new user for a customer."
-     * )
-     * @SWG\Response(
-     *     response="400",
-     *     description="Show errors validation."
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="Unique identifier of the customer",
-     *     required=true
-     * )
-     * @SWG\Tag(name="user")
-     * @Security(name="Bearer")
-     *
      * @param Request $request
      * @param Customer $customer
      * @param JsonResponder $responder
@@ -85,7 +67,7 @@ final class NewUser
             null,
             Response::HTTP_CREATED,
             $this->url->generateHeader(
-                "api_show_users_details",
+                "api_show_user_details",
                 [
                     "idCustomer" => $customer->getId(),
                     "idUser" => $user->getId()

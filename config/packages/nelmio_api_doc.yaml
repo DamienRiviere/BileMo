@@ -1,9 +1,419 @@
 nelmio_api_doc:
-    documentation:
-        info:
-            title: BileMo
-            description: This is an awesome app!
-            version: 1.0.0
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+    documentation:
+        info:
+            title: BileMo API
+            description: BileMo API documentation
+            version: 1.0.0
+        securityDefinitions:
+            Bearer:
+                type: apiKey
+                description: 'Value: Bearer {jwt}'
+                in: header
+                name: Authorization
+
+        paths:
+            /api/doc.json:
+                get:
+                    tags:
+                        - Global
+                    summary: "Obtain documentation on json format"
+                    responses:
+                        200:
+                            description: "Get API documentation in json format"
+            #### Authentication ####
+            /api/login_check:
+                post:
+                    summary: "Allow customer to authenticate to api and obtain token / refresh token"
+                    tags:
+                        - Global
+                    parameters:
+                        - in: body
+                          name: body
+                          required: true
+                          schema:
+                              $ref: "#/definitions/Login"
+                    responses:
+                        401:
+                            description: "Invalid credentials"
+                        200:
+                            description: "Login success"
+            #### ShowProducts ####
+            /api/products:
+                get:
+                    summary: "Show products list to customer"
+                    tags:
+                        - Product
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: page
+                          description: "Page number"
+                        - in: path
+                          name: filter
+                          description: "Filter by name or os"
+                    responses:
+                        404:
+                            description: "Products list not found"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        200:
+                            description: "Return products list to customer"
+                            schema:
+                                $ref: "#definitions/ShowProducts"
+            #### ShowProductDetails ####
+            /api/products/{id}:
+                get:
+                    summary: "Show product details to customer"
+                    tags:
+                        - Product
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: id
+                          description: "Unique identifier of product"
+                    responses:
+                        404:
+                            description: "Product not found"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        200:
+                            description: "Return product details to customer"
+                            schema:
+                                $ref: "#definitions/ShowProductDetails"
+            /api/customers/{id}/users:
+                #### ShowUsers ####
+                get:
+                    summary: "Show users list to customer"
+                    tags:
+                        - User
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: id
+                          description: "Unique identifier of customer"
+                          required: true
+                        - in: path
+                          name: page
+                          description: "Page number"
+                        - in: path
+                          name: filter
+                          description: "Filter by email or slug"
+                    responses:
+                        404:
+                            description: "Users list not found"
+                        403:
+                            description: "Customer is not allowed to get users list"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        200:
+                            description: "Return users list to customer"
+                            schema:
+                                $ref: "#definitions/ShowUsers"
+                #### New User ####
+                post:
+                    summary: "Create a new user to customer"
+                    tags:
+                        - User
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: id
+                          description: "Unique identifier of customer"
+                          required: true
+                    responses:
+                        403:
+                            description: "Customer is not allowed to create a new user"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        400:
+                            description: "Validation error"
+                        201:
+                            description: "New user created"
+            #### ShowUserDetails ####
+            /api/customers/{idCustomer}/users/{idUser}:
+                get:
+                    summary: "Show user details to customer"
+                    tags:
+                        - User
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: idCustomer
+                          description: "Unique identifier of customer"
+                          required: true
+                        - in: path
+                          name: idUser
+                          description: "Unique identifier of user"
+                          required: true
+                    responses:
+                        404:
+                            description: "User details not found"
+                        403:
+                            description: "Customer is not allowed to get user details"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        200:
+                            description: "Return user details to customer"
+                            schema:
+                                $ref: "#definitions/ShowUserDetails"
+                delete:
+                    summary: "Delete user of customer"
+                    tags:
+                        - User
+                    security:
+                        - Bearer: []
+                    parameters:
+                        - in: path
+                          name: idCustomer
+                          description: "Unique identifier of customer"
+                          required: true
+                        - in: path
+                          name: idUser
+                          description: "Unique identifier of user"
+                          required: true
+                    responses:
+                        403:
+                            description: "Customer is not allowed to delete this user"
+                        401:
+                            description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
+                        204:
+                            description: "User deleted with success"
+
+        definitions:
+            Login:
+                type: object
+                properties:
+                    first_name:
+                        type: string
+                        required: true
+                    last_name:
+                        type: string
+                        required: true
+                    email:
+                        type: string
+                        required: true
+                    street:
+                        type: string
+                        required: true
+                    city:
+                        type: string
+                        required: true
+                    region:
+                        type: string
+                        required: true
+                    postal_code:
+                        type: integer
+                        required: true
+                    phone_number:
+                        type: integer
+                        required: true
+            ShowProducts:
+                type: object
+                properties:
+                    name:
+                        type: string
+                    os:
+                        type: string
+                    dimensions:
+                        type: string
+                    weight:
+                        type: string
+                    processor:
+                        type: string
+                    gpu:
+                        type: string
+                    ram:
+                        type: string
+                    colors:
+                        type: array
+                        items:
+                            $ref: "#/definitions/Colors"
+                    ports:
+                        type: array
+                        items:
+                            $ref: "#/definitions/Ports"
+                    display:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductsDisplay"
+                    battery:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductsBattery"
+                    camera:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductsCamera"
+                    storage:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductsStorage"
+            Colors:
+                type: string
+            Ports:
+                type: string
+            ShowProductsDisplay:
+                type: string
+            ShowProductsBattery:
+                type: string
+            ShowProductsCamera:
+                type: string
+            ShowProductsStorage:
+                type: string
+            ShowProductDetails:
+                type: object
+                properties:
+                    name:
+                        type: string
+                    os:
+                        type: string
+                    dimensions:
+                        type: string
+                    weight:
+                        type: string
+                    processor:
+                        type: string
+                    gpu:
+                        type: string
+                    ram:
+                        type: string
+                    colors:
+                        type: array
+                        items:
+                            $ref: "#/definitions/Colors"
+                    ports:
+                        type: array
+                        items:
+                            $ref: "#/definitions/Ports"
+                    display:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductDetailsDisplay"
+                    battery:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductDetailsBattery"
+                    camera:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductDetailsCamera"
+                    storage:
+                        type: array
+                        items:
+                            $ref: "#/definitions/ShowProductDetailsStorage"
+            ShowProductDetailsDisplay:
+                type: object
+                properties:
+                    size:
+                        type: string
+                    resolution:
+                        type: string
+                    type:
+                        type: string
+            ShowProductDetailsBattery:
+                type: object
+                properties:
+                    capacity:
+                        type: string
+                    battery_technology:
+                        type: string
+                    removable_battery:
+                        type: string
+                    wireless_charging:
+                        type: string
+                    fast_charge:
+                        type: string
+            ShowProductDetailsCamera:
+                type: object
+                properties:
+                    megapixels:
+                        type: string
+            ShowProductDetailsStorage:
+                type: object
+                properties:
+                    capacity:
+                        type: string
+                    price:
+                        type: integer
+            ShowUsers:
+                type: object
+                properties:
+                    first_name:
+                        type: string
+                    last_name:
+                        type: string
+                    email:
+                        type: string
+                    slug:
+                        type: string
+                    created_at:
+                        type: string
+                        format: date-time
+                    customer:
+                        type: array
+                        items:
+                            $ref: "#definitions/ShowUsersCustomer"
+            ShowUsersCustomer:
+                type: object
+                properties:
+                    email:
+                        type: string
+                    organization:
+                        type: string
+                    customer_since:
+                        type: string
+                        format: date-time
+            ShowUserDetails:
+                type: object
+                properties:
+                    first_name:
+                        type: string
+                    last_name:
+                        type: string
+                    email:
+                        type: string
+                    slug:
+                        type: string
+                    created_at:
+                        type: string
+                        format: date-time
+                    address:
+                        type: array
+                        items:
+                            $ref: "#definitions/ShowUserDetailsAddress"
+                    customer:
+                        type: array
+                        items:
+                            $ref: "#definitions/ShowUserDetailsCustomer"
+            ShowUserDetailsAddress:
+                type: object
+                properties:
+                    street:
+                        type: string
+                    city:
+                        type: string
+                    region:
+                        type: string
+                    postal_code:
+                        type: integer
+                    phone_number:
+                        type: integer
+            ShowUserDetailsCustomer:
+                type: object
+                properties:
+                    email:
+                        type: string
+                    organization:
+                        type: string
+                    customer_since:
+                        type: string
+                        format: date-time
+

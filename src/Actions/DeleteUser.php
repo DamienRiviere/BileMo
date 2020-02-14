@@ -34,27 +34,6 @@ final class DeleteUser
     /**
      * Delete user
      *
-     * @SWG\Response(
-     *     response="204",
-     *     description="Delete user of a customer."
-     * )
-     * @SWG\Parameter(
-     *     name="idCustomer",
-     *     in="path",
-     *     type="integer",
-     *     description="Unique identifier of the customer.",
-     *     required=true
-     * )
-     * @SWG\Parameter(
-     *     name="idUser",
-     *     in="path",
-     *     type="integer",
-     *     description="Unique identifier of the user.",
-     *     required=true
-     * )
-     * @SWG\Tag(name="user")
-     * @Security(name="Bearer")
-     *
      * @param JsonResponder $responder
      * @param int $idCustomer
      * @param int $idUser

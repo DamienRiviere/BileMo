@@ -40,32 +40,6 @@ final class ShowUserDetails
     /**
      * Show user details of a customer
      *
-     * @SWG\Response(
-     *     response="200",
-     *     description="Return user details of a customer."
-     * )
-     * @SWG\Response(
-     *     response="404",
-     *     description="Return a 404 not found if the user don't exist.",
-     *     examples={"status": "404 Ressource introuvable", "message": "Utilisateur introuvable !"}
-     * )
-     * @SWG\Parameter(
-     *     name="idCustomer",
-     *     in="path",
-     *     type="integer",
-     *     description="Unique identifier of the customer.",
-     *     required=true
-     * )
-     * @SWG\Parameter(
-     *     name="idUser",
-     *     in="path",
-     *     type="integer",
-     *     description="Unique identifier of the user.",
-     *     required=true
-     * )
-     * @SWG\Tag(name="user")
-     * @Security(name="Bearer")
-     *
      * @param JsonResponder $responder
      * @param int $idCustomer
      * @param int $idUser

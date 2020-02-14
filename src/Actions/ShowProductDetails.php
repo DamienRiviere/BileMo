@@ -40,26 +40,6 @@ final class ShowProductDetails
     /**
      * Show smartphone details
      *
-     * @SWG\Response(
-     *     response="200",
-     *     description="Return product details.",
-     *     @Model(type=App\Entity\Smartphone::class, groups={"showProduct"})
-     * )
-     * @SWG\Response(
-     *     response="404",
-     *     description="Return a 404 not found if the product don't exist",
-     *     examples={"status": "404 Ressource introuvable", "message": "Smartphone introuvable !"}
-     * )
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="path",
-     *     type="integer",
-     *     description="ID of the product.",
-     *     required=true
-     * )
-     * @SWG\Tag(name="product")
-     * @Security(name="Bearer")
-     *
      * @param JsonResponder $responder
      * @param int $id
      * @return Response
