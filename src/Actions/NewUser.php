@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Domain\Helpers\AuthorizationHelper;
 use App\Domain\Services\GenerateUrl;
 use App\Domain\Services\Validator;
 use App\Domain\User\ResolverUser;
@@ -12,6 +13,7 @@ use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class NewUser
@@ -31,17 +33,32 @@ final class NewUser
     /** @var GenerateUrl */
     protected $url;
 
+    /** @var AuthorizationCheckerInterface */
+    protected $authorization;
+
+    /** @var AuthorizationHelper */
+    protected $authorizationHelper;
+
     /**
      * NewUser constructor.
      * @param ResolverUser $resolverUser
      * @param Validator $validator
      * @param GenerateUrl $url
+     * @param AuthorizationCheckerInterface $authorization
+     * @param AuthorizationHelper $authorizationHelper
      */
-    public function __construct(ResolverUser $resolverUser, Validator $validator, GenerateUrl $url)
-    {
+    public function __construct(
+        ResolverUser $resolverUser,
+        Validator $validator,
+        GenerateUrl $url,
+        AuthorizationCheckerInterface $authorization,
+        AuthorizationHelper $authorizationHelper
+    ) {
         $this->resolverUser = $resolverUser;
         $this->validator = $validator;
         $this->url = $url;
+        $this->authorization = $authorization;
+        $this->authorizationHelper = $authorizationHelper;
     }
 
     /**
@@ -54,6 +71,12 @@ final class NewUser
      */
     public function __invoke(Request $request, Customer $customer, JsonResponder $responder): Response
     {
+        $authorization = $this->authorization->isGranted('create', $customer);
+
+        if (!$authorization) {
+            return $responder($this->authorizationHelper->checkCreate($authorization), Response::HTTP_FORBIDDEN);
+        }
+
         $dto = $this->resolverUser->createUserDTO($request->getContent());
         $errors = $this->validator->validate($dto, '400 Requête non conforme !');
 

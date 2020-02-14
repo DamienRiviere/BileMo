@@ -4,10 +4,16 @@ namespace App\Domain\Helpers;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class PaginationHelper
+ * @package App\Domain\Helpers
+ */
 final class PaginationHelper
 {
 
     /**
+     * Check if the page exist
+     *
      * @param Request $request
      * @param array $data
      * @param int $limit
@@ -40,6 +46,8 @@ final class PaginationHelper
     }
 
     /**
+     * Get the total number of pages
+     *
      * @param array $data
      * @param int $limit
      * @return int
