@@ -42,7 +42,8 @@ final class ShowProductDetails
      *
      * @SWG\Response(
      *     response="200",
-     *     description="Return product details."
+     *     description="Return product details.",
+     *     @Model(type=App\Entity\Smartphone::class, groups={"showProduct"})
      * )
      * @SWG\Response(
      *     response="404",
