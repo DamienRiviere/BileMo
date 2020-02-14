@@ -9,6 +9,9 @@ use App\Entity\Customer;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -61,6 +64,8 @@ final class ShowUsers
     }
 
     /**
+     * Show users of a customer
+     *
      * @param Request $request
      * @param JsonResponder $responder
      * @param Customer $customer

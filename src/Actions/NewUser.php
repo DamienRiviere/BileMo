@@ -8,6 +8,8 @@ use App\Domain\Services\Validator;
 use App\Domain\User\ResolverUser;
 use App\Entity\Customer;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,6 +62,8 @@ final class NewUser
     }
 
     /**
+     * Create a new user
+     *
      * @param Request $request
      * @param Customer $customer
      * @param JsonResponder $responder
@@ -86,7 +90,7 @@ final class NewUser
             null,
             Response::HTTP_CREATED,
             $this->url->generateHeader(
-                "api_show_users_details",
+                "api_show_user_details",
                 [
                     "idCustomer" => $customer->getId(),
                     "idUser" => $user->getId()

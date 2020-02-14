@@ -41,7 +41,7 @@ final class PaginationHelper
     {
         return [
             "status" => "404 Ressource introuvable",
-            "message" => "Liste des produits introuvable !"
+            "message" => "Liste introuvable !"
         ];
     }
 

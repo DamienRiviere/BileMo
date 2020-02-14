@@ -5,6 +5,9 @@ namespace App\Actions;
 use App\Domain\Services\SerializerService;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,6 +38,8 @@ final class ShowProductDetails
     }
 
     /**
+     * Show smartphone details
+     *
      * @param JsonResponder $responder
      * @param int $id
      * @return Response

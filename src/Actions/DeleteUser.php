@@ -6,6 +6,8 @@ use App\Domain\Helpers\AuthorizationHelper;
 use App\Domain\User\ResolverUser;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -51,6 +53,8 @@ final class DeleteUser
     }
 
     /**
+     * Delete user
+     *
      * @param JsonResponder $responder
      * @param int $idCustomer
      * @param int $idUser
