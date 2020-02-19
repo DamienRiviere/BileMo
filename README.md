@@ -1,3 +1,5 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8bbf0877b93945469b3641ca21b53c82)](https://www.codacy.com/manual/DamienRiviere/BileMo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DamienRiviere/BileMo&amp;utm_campaign=Badge_Grade)
+
 # Créez un web service exposant une API
 
 ## Technologie utilisée
