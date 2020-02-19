@@ -2,16 +2,18 @@
 
 namespace App\Actions;
 
-use App\Domain\Helpers\AuthorizationHelper;
+use App\Domain\Common\Exception\AuthorizationException;
+use App\Domain\Common\Exception\PageNotFoundException;
 use App\Domain\Helpers\PaginationHelper;
+use App\Domain\Services\CheckAuthorization;
+use App\Domain\Services\HttpCache;
 use App\Domain\Services\SerializerService;
-use App\Entity\Customer;
 use App\Entity\User;
+use App\Repository\CustomerRepository;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +28,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 final class ShowUsers
 {
 
-    /** @var UserRepository */
+    /** @var CustomerRepository */
+    protected $customerRepo;
+
+    /** @var UserRepository  */
     protected $userRepo;
 
     /** @var SerializerService */
@@ -38,57 +43,63 @@ final class ShowUsers
     /** @var AuthorizationCheckerInterface */
     protected $authorization;
 
-    /** @var AuthorizationHelper */
-    protected $authorizationHelper;
+    /** @var CheckAuthorization */
+    protected $checkAuthorization;
+
+    /** @var HttpCache */
+    protected $cache;
 
     /**
      * ShowUsers constructor.
      * @param UserRepository $userRepo
+     * @param CustomerRepository $customerRepo
      * @param SerializerService $serializer
      * @param PaginationHelper $paginationHelper
      * @param AuthorizationCheckerInterface $authorization
-     * @param AuthorizationHelper $authorizationHelper
+     * @param HttpCache $cache
+     * @param CheckAuthorization $checkAuthorization
      */
     public function __construct(
         UserRepository $userRepo,
+        CustomerRepository $customerRepo,
         SerializerService $serializer,
         PaginationHelper $paginationHelper,
         AuthorizationCheckerInterface $authorization,
-        AuthorizationHelper $authorizationHelper
+        HttpCache $cache,
+        CheckAuthorization $checkAuthorization
     ) {
         $this->userRepo = $userRepo;
+        $this->customerRepo = $customerRepo;
         $this->serializer = $serializer;
         $this->paginationHelper = $paginationHelper;
         $this->authorization = $authorization;
-        $this->authorizationHelper = $authorizationHelper;
+        $this->cache = $cache;
+        $this->checkAuthorization = $checkAuthorization;
     }
 
     /**
      * Show users of a customer
      *
      * @param Request $request
-     * @param JsonResponder $responder
-     * @param Customer $customer
+     * @param int $id
      * @return Response
+     * @throws AuthorizationException
+     * @throws EntityNotFoundException
+     * @throws NonUniqueResultException
+     * @throws PageNotFoundException
      */
-    public function __invoke(Request $request, JsonResponder $responder, Customer $customer): Response
+    public function __invoke(Request $request, int $id): Response
     {
+        $customer = $this->customerRepo->findById($id);
         $users = $this->userRepo->findByCustomer($customer);
-        $authorization = $this->authorization->isGranted('view', $users);
-
-        if (!$authorization) {
-            return $responder($this->authorizationHelper->checkAccess($authorization), Response::HTTP_FORBIDDEN);
-        }
+        $authorization = $this->authorization->isGranted('usersList', ['users' => $users, 'customer' => $customer]);
+        $this->checkAuthorization->checkAccess($authorization);
 
         $page = $this->paginationHelper->checkPage($request, $users, User::LIMIT_PER_PAGE);
 
-        if (is_array($page)) {
-            return $responder($page, Response::HTTP_NOT_FOUND);
-        }
-
-        $users = $this->userRepo->findAllUser($page, $customer, $request->query->get('filter'));
+        $paginated = $this->userRepo->findAllUser($page, $customer, $request->query->get('filter'));
         $data = $this->serializer->serializer(
-            $users,
+            $paginated,
             [
                 'groups' => ['showUser', 'listUser'],
                 'page' => $page,
@@ -96,6 +107,9 @@ final class ShowUsers
             ]
         );
 
-        return $responder($data, Response::HTTP_OK);
+        $response = JsonResponder::response($data, Response::HTTP_OK);
+        $response = $this->cache->setHttpCache($response, $request, 3600);
+
+        return $response;
     }
 }

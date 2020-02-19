@@ -2,12 +2,12 @@
 
 namespace App\Actions;
 
+use App\Domain\Services\HttpCache;
 use App\Domain\Services\SerializerService;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
+use Doctrine\ORM\EntityNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,39 +26,41 @@ final class ShowProductDetails
     /** @var SerializerService */
     protected $serializer;
 
+    /** @var HttpCache */
+    protected $cache;
+
     /**
      * ShowProductDetails constructor.
      * @param SerializerService $serializer
      * @param SmartphoneRepository $smartphoneRepo
+     * @param HttpCache $cache
      */
-    public function __construct(SerializerService $serializer, SmartphoneRepository $smartphoneRepo)
-    {
+    public function __construct(
+        SerializerService $serializer,
+        SmartphoneRepository $smartphoneRepo,
+        HttpCache $cache
+    ) {
         $this->serializer = $serializer;
         $this->smartphoneRepo = $smartphoneRepo;
+        $this->cache = $cache;
     }
 
     /**
      * Show smartphone details
      *
-     * @param JsonResponder $responder
+     * @param Request $request
      * @param int $id
      * @return Response
+     * @throws EntityNotFoundException
      */
-    public function __invoke(JsonResponder $responder, int $id): Response
+    public function __invoke(Request $request, int $id): Response
     {
-        $smartphone = $this->smartphoneRepo->findOneBy(['id' => $id]);
+        $smartphone = $this->smartphoneRepo->findOneById($id);
         $data = $this->serializer->serializer($smartphone, ['groups' => ['showProduct', 'productDetails']]);
 
-        if (is_null($smartphone)) {
-            return $responder(
-                [
-                    "status" => "404 Ressource introuvable",
-                    "message" => "Smartphone introuvable !"
-                ],
-                Response::HTTP_NOT_FOUND
-            );
-        }
+        $response = JsonResponder::response($data, Response::HTTP_OK);
+        $response = $this->cache->setHttpCache($response, $request, 3600);
 
-        return $responder($data, Response::HTTP_OK);
+        return $response;
     }
 }

@@ -6,6 +6,8 @@ use App\Entity\Customer;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
@@ -51,6 +53,7 @@ class UserRepository extends ServiceEntityRepository
     /**
      * @param Customer $customer
      * @return array
+     * @throws EntityNotFoundException
      */
     public function findByCustomer(Customer $customer): array
     {
@@ -58,8 +61,35 @@ class UserRepository extends ServiceEntityRepository
             ->where('u.customer = :customer')
             ->setParameter('customer', $customer)
             ->getQuery()
+            ->getResult()
         ;
 
-        return $query->getResult();
+        if (is_array($query) and $query[0] instanceof User) {
+            return $query;
+        }
+
+        throw new EntityNotFoundException("Liste des utilisateurs introuvable !");
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     * @throws EntityNotFoundException
+     * @throws NonUniqueResultException
+     */
+    public function findOneById(int $id): User
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if ($query instanceof User) {
+            return $query;
+        }
+
+        throw new EntityNotFoundException("Utilisateur introuvable !");
     }
 }

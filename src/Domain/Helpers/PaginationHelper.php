@@ -2,6 +2,7 @@
 
 namespace App\Domain\Helpers;
 
+use App\Domain\Common\Exception\PageNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,6 +19,7 @@ final class PaginationHelper
      * @param array $data
      * @param int $limit
      * @return array|int
+     * @throws PageNotFoundException
      */
     public function checkPage(Request $request, array $data, int $limit)
     {
@@ -28,21 +30,10 @@ final class PaginationHelper
         }
 
         if ($page > $this->getPages($data, $limit)) {
-            return $this->pageDontExist();
+            throw new PageNotFoundException("Cette page n'existe pas !");
         }
 
         return $page;
-    }
-
-    /**
-     * @return array
-     */
-    public function pageDontExist(): array
-    {
-        return [
-            "status" => "404 Ressource introuvable",
-            "message" => "Liste introuvable !"
-        ];
     }
 
     /**

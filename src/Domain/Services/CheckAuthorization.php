@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Domain\Helpers;
+namespace App\Domain\Services;
 
-final class AuthorizationHelper
+use App\Domain\Common\Exception\AuthorizationException;
+
+final class CheckAuthorization
 {
-
-    public const STATUS = '403 Non autorisé';
+    
     public const ACCESS_MESSAGE = 'Vous n\'êtes pas autorisé à accéder à cette ressource !';
     public const CREATE_MESSAGE = 'Vous n\'êtes pas autorisé à créer cette ressource !';
     public const DELETE_MESSAGE = 'Vous n\'êtes pas autorisé à supprimer cette ressource !';
@@ -13,10 +14,7 @@ final class AuthorizationHelper
     public function checkAccess(bool $authorization)
     {
         if (!$authorization) {
-            return [
-                'status' => self::STATUS,
-                'message' => self::ACCESS_MESSAGE
-            ];
+            throw new AuthorizationException(self::ACCESS_MESSAGE);
         }
 
         return null;
@@ -25,10 +23,7 @@ final class AuthorizationHelper
     public function checkCreate(bool $authorization)
     {
         if (!$authorization) {
-            return [
-                'status' => self::STATUS,
-                'message' => self::CREATE_MESSAGE
-            ];
+            throw new AuthorizationException(self::CREATE_MESSAGE);
         }
 
         return null;
@@ -37,10 +32,7 @@ final class AuthorizationHelper
     public function checkDelete(bool $authorization)
     {
         if (!$authorization) {
-            return [
-                'status' => self::STATUS,
-                'message' => self::DELETE_MESSAGE
-            ];
+            throw new AuthorizationException(self::DELETE_MESSAGE);
         }
 
         return null;

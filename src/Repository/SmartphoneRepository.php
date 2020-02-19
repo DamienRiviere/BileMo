@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Smartphone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
@@ -36,5 +37,20 @@ class SmartphoneRepository extends ServiceEntityRepository
         $query->getQuery();
 
         return new Paginator($query);
+    }
+
+    public function findOneById(int $id)
+    {
+        $query = $this->createQueryBuilder('s')
+            ->where('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($query instanceof Smartphone) {
+            return $query;
+        }
+
+        throw new EntityNotFoundException("Produit introuvable !");
     }
 }

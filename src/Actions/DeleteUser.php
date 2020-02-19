@@ -2,12 +2,14 @@
 
 namespace App\Actions;
 
-use App\Domain\Helpers\AuthorizationHelper;
+use App\Domain\Common\Exception\AuthorizationException;
+use App\Domain\Services\CheckAuthorization;
 use App\Domain\User\ResolverUser;
+use App\Repository\CustomerRepository;
 use App\Repository\UserRepository;
 use App\Responder\JsonResponder;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -16,7 +18,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Class DeleteUser
  * @package App\Actions
  *
- * @Route("/api/customers/{idCustomer}/users/{idUser}", name="api_delete_user", methods={"DELETE"})
+ * @Route("/api/customers/{customerId}/users/{userId}", name="api_delete_user", methods={"DELETE"})
  */
 final class DeleteUser
 {
@@ -30,49 +32,53 @@ final class DeleteUser
     /** @var AuthorizationCheckerInterface */
     protected $authorization;
 
-    /** @var AuthorizationHelper */
-    protected $authorizationHelper;
+    /** @var CheckAuthorization */
+    protected $checkAuthorization;
+
+    /** @var CustomerRepository */
+    protected $customerRepo;
 
     /**
      * DeleteUser constructor.
      * @param UserRepository $userRepo
      * @param ResolverUser $resolverUser
      * @param AuthorizationCheckerInterface $authorization
-     * @param AuthorizationHelper $authorizationHelper
+     * @param CheckAuthorization $checkAuthorization
+     * @param CustomerRepository $customerRepo
      */
     public function __construct(
         UserRepository $userRepo,
         ResolverUser $resolverUser,
         AuthorizationCheckerInterface $authorization,
-        AuthorizationHelper $authorizationHelper
+        CheckAuthorization $checkAuthorization,
+        CustomerRepository $customerRepo
     ) {
         $this->userRepo = $userRepo;
         $this->resolverUser = $resolverUser;
         $this->authorization = $authorization;
-        $this->authorizationHelper = $authorizationHelper;
+        $this->checkAuthorization = $checkAuthorization;
+        $this->customerRepo = $customerRepo;
     }
 
     /**
      * Delete user
      *
-     * @param JsonResponder $responder
-     * @param int $idCustomer
-     * @param int $idUser
+     * @param int $customerId
+     * @param int $userId
      * @return Response
+     * @throws AuthorizationException
+     * @throws EntityNotFoundException
+     * @throws NonUniqueResultException
      */
-    public function __invoke(JsonResponder $responder, int $idCustomer, int $idUser)
+    public function __invoke(int $customerId, int $userId)
     {
-        $user = $this->userRepo->findOneBy(['id' => $idUser, 'customer' => $idCustomer]);
-        $authorization = $this->authorization->isGranted('delete', $user);
+        $user = $this->userRepo->findOneById($userId);
+        $customer = $this->customerRepo->findById($customerId);
+        $authorization = $this->authorization->isGranted('userDelete', ['user' => $user, 'customer' => $customer]);
+        $this->checkAuthorization->checkDelete($authorization);
 
-        if (!$authorization) {
-            return $responder($this->authorizationHelper->checkDelete($authorization), Response::HTTP_FORBIDDEN);
-        }
+        $this->resolverUser->delete($user);
 
-        if (!is_null($user)) {
-            $this->resolverUser->delete($user);
-        }
-
-        return $responder(null, Response::HTTP_NO_CONTENT);
+        return JsonResponder::response(null, Response::HTTP_NO_CONTENT);
     }
 }

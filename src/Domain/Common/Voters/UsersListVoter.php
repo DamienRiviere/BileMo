@@ -7,15 +7,14 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-final class UserVoter extends Voter
+final class UsersListVoter extends Voter
 {
 
-    protected const DETAILS = 'userDetails';
-    protected const DELETE = 'userDelete';
+    protected const LIST = 'usersList';
 
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::DETAILS, self::DELETE])) {
+        if (!in_array($attribute, [self::LIST])) {
             return false;
         }
 
@@ -23,7 +22,7 @@ final class UserVoter extends Voter
             return false;
         }
 
-        if (!array_key_exists('user', $subject)) {
+        if (!array_key_exists('users', $subject)) {
             return false;
         }
 
@@ -31,7 +30,7 @@ final class UserVoter extends Voter
             return false;
         }
 
-        if (!$subject['user'] instanceof User) {
+        if (!$subject['users'][0] instanceof User) {
             return false;
         }
 
@@ -44,7 +43,7 @@ final class UserVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $user = $subject['user'];
+        $user = $subject['users'][0];
         $customer = $subject['customer'];
 
         if ($customer != $token->getUser()) {

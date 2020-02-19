@@ -2,26 +2,26 @@
 
 namespace App\Domain\User\Normalizer;
 
-use App\Domain\Services\Hateoas;
 use App\Entity\User;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
 {
 
-    /** @var Hateoas */
-    protected $hateoas;
-
     /** @var ObjectNormalizer */
     protected $normalizer;
 
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
+
     public function __construct(
         ObjectNormalizer $normalizer,
-        Hateoas $hateoas
+        UrlGeneratorInterface $urlGenerator
     ) {
         $this->normalizer = $normalizer;
-        $this->hateoas = $hateoas;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = [])
@@ -46,13 +46,11 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
 
     public function getSelfLink(array $data, User $object): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['list']['href'] = $this->urlGenerator->generate(
             User::SHOW_USERS,
             [
                 'id' => $object->getCustomer()->getId()
-            ],
-            'self'
+            ]
         );
 
         return $data;
@@ -60,14 +58,12 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
 
     public function getDeleteLink(array $data, User $object): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['delete']['href'] = $this->urlGenerator->generate(
             User::DELETE_USER,
             [
-                'idCustomer' => $object->getCustomer()->getId(),
-                'idUser' => $object->getId()
-            ],
-            'delete'
+                'customerId' => $object->getCustomer()->getId(),
+                'userId' => $object->getId()
+            ]
         );
 
         return $data;
@@ -76,11 +72,10 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
     public function getEmbeddedAddress(array $data, User $object): array
     {
         for ($i = 0; $i < count($object->getAddress()); $i++) {
-            $data = $this->hateoas->setEmbedded(
-                $data,
+            $data['_embedded']['address' . '_' . $i] = $this->normalizer->normalize(
                 $object->getAddress()[$i],
-                'address' . '_' . $i,
-                'showUserAddress'
+                'json',
+                ['groups' => 'showUserAddress']
             );
         }
 
@@ -89,11 +84,10 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
 
     public function getEmbeddedCustomer(array $data, User $object): array
     {
-        $data = $this->hateoas->setEmbedded(
-            $data,
+        $data['_embedded']['customer'] = $this->normalizer->normalize(
             $object->getCustomer(),
-            'customer',
-            'showCustomer'
+            'json',
+            ['groups' => 'showCustomer']
         );
 
         return $data;

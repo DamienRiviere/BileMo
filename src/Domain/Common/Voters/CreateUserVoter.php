@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 final class CreateUserVoter extends Voter
 {
 
-    protected const CREATE = 'create';
+    protected const CREATE = 'createUser';
 
     protected function supports($attribute, $subject)
     {
@@ -26,10 +26,10 @@ final class CreateUserVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $customerAuth = $token->getUser();
+        $customerToken = $token->getUser();
         $customerSubject = $subject;
 
-        if ($customerAuth === $customerSubject) {
+        if ($customerToken === $customerSubject) {
             return true;
         }
 

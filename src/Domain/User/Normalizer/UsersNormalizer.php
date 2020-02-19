@@ -2,10 +2,10 @@
 
 namespace App\Domain\User\Normalizer;
 
-use App\Domain\Services\Hateoas;
 use App\Domain\Services\Pagination;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,17 +18,17 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
     /** @var ObjectNormalizer */
     protected $normalizer;
 
-    /** @var Hateoas */
-    protected $hateoas;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
     public function __construct(
         ObjectNormalizer $normalizer,
-        Hateoas $hateoas,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        UrlGeneratorInterface $urlGenerator
     ) {
         $this->normalizer = $normalizer;
-        $this->hateoas = $hateoas;
         $this->userRepo = $userRepo;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = [])
@@ -47,7 +47,7 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
         // _link
         $data = $this->getSelfLink($data, $object);
-        $data = $this->getFirstPageLink($data, $context, $pagination);
+        $data = $this->getFirstPageLink($data, $context);
         $data = $this->getLastPageLink($data, $context, $pagination);
 
         if ($context['page'] < $pagination->getPages()) {
@@ -66,29 +66,25 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
     public function getSelfLink(array $data, User $object): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['self']['href'] = $this->urlGenerator->generate(
             User::SHOW_USER_DETAILS,
             [
-                'idUser' => $object->getId(),
-                'idCustomer' => $object->getCustomer()->getId()
-            ],
-            'self'
+                'userId' => $object->getId(),
+                'customerId' => $object->getCustomer()->getId()
+            ]
         );
 
         return $data;
     }
 
-    public function getFirstPageLink(array $data, array $context, Pagination $pagination): array
+    public function getFirstPageLink(array $data, array $context): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['first']['href'] = $this->urlGenerator->generate(
             User::SHOW_USERS,
             [
                 'id' => $context['customer']->getId(),
-                'page' => $pagination->getFirstPage()
-            ],
-            'first'
+                'page' => 1
+            ]
         );
 
         return $data;
@@ -96,14 +92,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
     public function getLastPageLink(array $data, array $context, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['last']['href'] = $this->urlGenerator->generate(
             User::SHOW_USERS,
             [
                 'id' => $context['customer']->getId(),
                 'page' => $pagination->getLastPage()
-            ],
-            'last'
+            ]
         );
 
         return $data;
@@ -111,14 +105,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
     public function getNextPageLink(array $data, array $context, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['next']['href'] = $this->urlGenerator->generate(
             User::SHOW_USERS,
             [
                 'id' => $context['customer']->getId(),
                 'page' => $pagination->getNextPage()
-            ],
-            'next'
+            ]
         );
 
         return $data;
@@ -126,14 +118,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
     public function getPreviousPageLink(array $data, array $context, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['prev']['href'] = $this->urlGenerator->generate(
             User::SHOW_USERS,
             [
                 'id' => $context['customer']->getId(),
                 'page' => $pagination->getPreviousPage()
-            ],
-            'prev'
+            ]
         );
 
         return $data;
@@ -141,11 +131,10 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
 
     public function getEmbeddedCustomer(array $data, User $object): array
     {
-        $data = $this->hateoas->setEmbedded(
-            $data,
+        $data['_embedded']['customer'] = $this->normalizer->normalize(
             $object->getCustomer(),
-            'customer',
-            'showCustomer'
+            'json',
+            ['groups' => 'showCustomer']
         );
 
         return $data;

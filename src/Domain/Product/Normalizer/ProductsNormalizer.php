@@ -2,10 +2,10 @@
 
 namespace App\Domain\Product\Normalizer;
 
-use App\Domain\Services\Hateoas;
 use App\Domain\Services\Pagination;
 use App\Entity\Smartphone;
 use App\Repository\SmartphoneRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,17 +18,17 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
     /** @var SmartphoneRepository */
     protected $smartphoneRepo;
 
-    /** @var Hateoas */
-    protected $hateoas;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
     public function __construct(
         ObjectNormalizer $normalizer,
         SmartphoneRepository $smartphoneRepo,
-        Hateoas $hateoas
+        UrlGeneratorInterface $urlGenerator
     ) {
         $this->normalizer = $normalizer;
         $this->smartphoneRepo = $smartphoneRepo;
-        $this->hateoas = $hateoas;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = [])
@@ -47,7 +47,7 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
         // _link
         $data = $this->getSelfLink($data, $object);
-        $data = $this->getFirstPageLink($data, $pagination);
+        $data = $this->getFirstPageLink($data);
         $data = $this->getLastPageLink($data, $pagination);
 
         if ($context['page'] < $pagination->getPages()) {
@@ -69,23 +69,19 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
     public function getSelfLink(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['self']['href'] = $this->urlGenerator->generate(
             Smartphone::SHOW_PRODUCT_DETAILS,
-            ['id' => $object->getId()],
-            'self'
+            ['id' => $object->getId()]
         );
 
         return $data;
     }
 
-    public function getFirstPageLink(array $data, Pagination $pagination): array
+    public function getFirstPageLink(array $data): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['first']['href'] = $this->urlGenerator->generate(
             Smartphone::SHOW_PRODUCTS,
-            ['page' => $pagination->getFirstPage()],
-            'first'
+            ['page' => 1]
         );
 
         return $data;
@@ -93,11 +89,9 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
     public function getLastPageLink(array $data, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['last']['href'] = $this->urlGenerator->generate(
             Smartphone::SHOW_PRODUCTS,
-            ['page' => $pagination->getLastPage()],
-            'last'
+            ['page' => $pagination->getLastPage()]
         );
 
         return $data;
@@ -105,11 +99,9 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
     public function getNextPageLink(array $data, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['next']['href'] = $this->urlGenerator->generate(
             Smartphone::SHOW_PRODUCTS,
-            ['page' => $pagination->getNextPage()],
-            'next'
+            ['page' => $pagination->getNextPage()]
         );
 
         return $data;
@@ -117,11 +109,9 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
     public function getPreviousPageLink(array $data, Pagination $pagination): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
+        $data['_link']['prev']['href'] = $this->urlGenerator->generate(
             Smartphone::SHOW_PRODUCTS,
-            ['page' => $pagination->getPreviousPage()],
-            'prev'
+            ['page' => $pagination->getPreviousPage()]
         );
 
         return $data;
@@ -129,28 +119,44 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
 
     public function getEmbeddedDisplay(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getDisplay(), 'display', 'display');
+        $data['_embedded']['display'] = $this->normalizer->normalize(
+            $object->getDisplay(),
+            'json',
+            ['groups' => 'display']
+        );
 
         return $data;
     }
 
     public function getEmbeddedBattery(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getBattery(), 'battery', 'battery');
+        $data['_embedded']['battery'] = $this->normalizer->normalize(
+            $object->getBattery(),
+            'json',
+            ['groups' => 'battery']
+        );
 
         return $data;
     }
 
     public function getEmbeddedCamera(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getCamera(), 'camera', 'camera');
+        $data['_embedded']['camera'] = $this->normalizer->normalize(
+            $object->getCamera(),
+            'json',
+            ['groups' => 'camera']
+        );
 
         return $data;
     }
 
     public function getEmbeddedStorage(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getStorage(), 'storage', 'storage');
+        $data['_embedded']['storage'] = $this->normalizer->normalize(
+            $object->getStorage(),
+            'json',
+            ['groups' => 'storage']
+        );
 
         return $data;
     }

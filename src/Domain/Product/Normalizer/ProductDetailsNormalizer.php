@@ -2,8 +2,8 @@
 
 namespace App\Domain\Product\Normalizer;
 
-use App\Domain\Services\Hateoas;
 use App\Entity\Smartphone;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -13,13 +13,13 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
     /** @var ObjectNormalizer */
     protected $normalizer;
 
-    /** @var Hateoas */
-    protected $hateoas;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
-    public function __construct(ObjectNormalizer $normalizer, Hateoas $hateoas)
+    public function __construct(ObjectNormalizer $normalizer, UrlGeneratorInterface $urlGenerator)
     {
         $this->normalizer = $normalizer;
-        $this->hateoas = $hateoas;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = [])
@@ -45,33 +45,40 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
 
     public function getListLink(array $data): array
     {
-        $data = $this->hateoas->setLink(
-            $data,
-            Smartphone::SHOW_PRODUCTS,
-            null,
-            'list'
-        );
+        $data['_link']['list']['href'] = $this->urlGenerator->generate(Smartphone::SHOW_PRODUCTS);
 
         return $data;
     }
 
     public function getEmbeddedDisplay(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getDisplay(), 'display', 'showDisplay');
+        $data['_embedded']['display'] = $this->normalizer->normalize(
+            $object->getDisplay(),
+            'json',
+            ['groups' => 'showDisplay']
+        );
 
         return $data;
     }
 
     public function getEmbeddedBattery(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getBattery(), 'battery', 'showBattery');
+        $data['_embedded']['battery'] = $this->normalizer->normalize(
+            $object->getBattery(),
+            'json',
+            ['groups' => 'showBattery']
+        );
 
         return $data;
     }
 
     public function getEmbeddedCamera(array $data, Smartphone $object): array
     {
-        $data = $this->hateoas->setEmbedded($data, $object->getCamera(), 'camera', 'showCamera');
+        $data['_embedded']['camera'] = $this->normalizer->normalize(
+            $object->getCamera(),
+            'json',
+            ['groups' => 'showCamera']
+        );
 
         return $data;
     }
@@ -79,7 +86,11 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
     public function getEmbeddedStorage(array $data, Smartphone $object): array
     {
         for ($i = 0; $i < count($object->getStorage()); $i++) {
-            $data = $this->hateoas->setEmbedded($data, $object->getStorage()[$i], 'storage'  . '_' . $i, 'showStorage');
+            $data['_embedded']['storage' . '_' . $i] = $this->normalizer->normalize(
+                $object->getStorage()[$i],
+                'json',
+                ['groups' => 'showStorage']
+            );
         }
 
         return $data;
