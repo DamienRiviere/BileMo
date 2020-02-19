@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\EventListener;
+namespace App\Domain\Common\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTExpiredEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTInvalidEvent;

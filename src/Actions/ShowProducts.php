@@ -2,14 +2,13 @@
 
 namespace App\Actions;
 
+use App\Domain\Common\Exception\PageNotFoundException;
 use App\Domain\Helpers\PaginationHelper;
+use App\Domain\Services\HttpCache;
 use App\Domain\Services\SerializerService;
 use App\Entity\Smartphone;
 use App\Repository\SmartphoneRepository;
 use App\Responder\JsonResponder;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +23,7 @@ final class ShowProducts
 {
 
     /** @var SmartphoneRepository */
-    protected $smartRepo;
+    protected $smartphoneRepo;
 
     /** @var SerializerService */
     protected $serializer;
@@ -32,38 +31,43 @@ final class ShowProducts
     /** @var PaginationHelper */
     protected $paginationHelper;
 
+    /** @var HttpCache */
+    protected $cache;
+
     /**
      * ShowProducts constructor.
-     * @param SmartphoneRepository $smartRepo
+     * @param SmartphoneRepository $smartphoneRepo
      * @param SerializerService $serializer
      * @param PaginationHelper $paginationHelper
+     * @param HttpCache $cache
      */
     public function __construct(
-        SmartphoneRepository $smartRepo,
+        SmartphoneRepository $smartphoneRepo,
         SerializerService $serializer,
-        PaginationHelper $paginationHelper
+        PaginationHelper $paginationHelper,
+        HttpCache $cache
     ) {
-        $this->smartRepo = $smartRepo;
+        $this->smartphoneRepo = $smartphoneRepo;
         $this->serializer = $serializer;
         $this->paginationHelper = $paginationHelper;
+        $this->cache = $cache;
     }
 
     /**
      * Show all products
      *
      * @param Request $request
-     * @param JsonResponder $responder
      * @return Response
+     * @throws PageNotFoundException
      */
-    public function __invoke(Request $request, JsonResponder $responder): Response
+    public function __invoke(Request $request): Response
     {
-        $page = $this->paginationHelper->checkPage($request, $this->smartRepo->findAll(), Smartphone::LIMIT_PER_PAGE);
-
-        if (is_array($page)) {
-            return $responder($page, Response::HTTP_NOT_FOUND);
-        }
-
-        $products =  $this->smartRepo->findAllSmartphone($page, $request->query->get('filter'));
+        $page = $this->paginationHelper->checkPage(
+            $request,
+            $this->smartphoneRepo->findAll(),
+            Smartphone::LIMIT_PER_PAGE
+        );
+        $products =  $this->smartphoneRepo->findAllSmartphone($page, $request->query->get('filter'));
         $data = $this->serializer->serializer(
             $products,
             [
@@ -72,6 +76,9 @@ final class ShowProducts
             ]
         );
 
-        return $responder($data, Response::HTTP_OK);
+        $response = JsonResponder::response($data, Response::HTTP_OK);
+        $response = $this->cache->setHttpCache($response, $request, 3600);
+
+        return $response;
     }
 }

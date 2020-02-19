@@ -17,7 +17,7 @@ final class JsonResponder
      * @param array $headers
      * @return Response
      */
-    public function __invoke($data, int $statusCode, array $headers = [])
+    public static function response($data, int $statusCode, array $headers = [])
     {
         if (is_array($data)) {
             $data = json_encode($data);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\EventListener;
+namespace App\Domain\Common\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;

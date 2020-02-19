@@ -32,14 +32,6 @@ final class Pagination
     /**
      * @return int
      */
-    public function getFirstPage(): int
-    {
-        return 1;
-    }
-
-    /**
-     * @return int
-     */
     public function getLastPage(): int
     {
         $count = count($this->data);

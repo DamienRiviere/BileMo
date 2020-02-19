@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Common\Exception\ValidationException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -25,10 +26,10 @@ final class Validator
 
     /**
      * @param $object
-     * @param string $response
      * @return array|null
+     * @throws ValidationException
      */
-    public function validate($object, string $response)
+    public function validate($object)
     {
         $errors = $this->validator->validate($object);
 
@@ -39,10 +40,7 @@ final class Validator
                 $messages[$violation->getPropertyPath()] = $violation->getMessage();
             }
 
-            return [
-                'status' => $response,
-                'messages' => $messages
-            ];
+            throw new ValidationException(null, $messages);
         }
 
         return null;

@@ -2,14 +2,16 @@
 
 namespace App\Actions;
 
-use App\Domain\Helpers\AuthorizationHelper;
+use App\Domain\Common\Exception\AuthorizationException;
+use App\Domain\Common\Exception\ValidationException;
+use App\Domain\Services\CheckAuthorization;
 use App\Domain\Services\GenerateUrl;
 use App\Domain\Services\Validator;
 use App\Domain\User\ResolverUser;
-use App\Entity\Customer;
+use App\Repository\CustomerRepository;
 use App\Responder\JsonResponder;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,8 +38,11 @@ final class NewUser
     /** @var AuthorizationCheckerInterface */
     protected $authorization;
 
-    /** @var AuthorizationHelper */
-    protected $authorizationHelper;
+    /** @var CheckAuthorization */
+    protected $checkAuthorization;
+
+    /** @var CustomerRepository */
+    protected $customerRepo;
 
     /**
      * NewUser constructor.
@@ -45,55 +50,55 @@ final class NewUser
      * @param Validator $validator
      * @param GenerateUrl $url
      * @param AuthorizationCheckerInterface $authorization
-     * @param AuthorizationHelper $authorizationHelper
+     * @param CheckAuthorization $checkAuthorization
+     * @param CustomerRepository $customerRepo
      */
     public function __construct(
         ResolverUser $resolverUser,
         Validator $validator,
         GenerateUrl $url,
         AuthorizationCheckerInterface $authorization,
-        AuthorizationHelper $authorizationHelper
+        CheckAuthorization $checkAuthorization,
+        CustomerRepository $customerRepo
     ) {
         $this->resolverUser = $resolverUser;
         $this->validator = $validator;
         $this->url = $url;
         $this->authorization = $authorization;
-        $this->authorizationHelper = $authorizationHelper;
+        $this->checkAuthorization = $checkAuthorization;
+        $this->customerRepo = $customerRepo;
     }
 
     /**
      * Create a new user
      *
      * @param Request $request
-     * @param Customer $customer
-     * @param JsonResponder $responder
+     * @param int $id
      * @return Response
+     * @throws AuthorizationException
+     * @throws EntityNotFoundException
+     * @throws NonUniqueResultException
+     * @throws ValidationException
      */
-    public function __invoke(Request $request, Customer $customer, JsonResponder $responder): Response
+    public function __invoke(Request $request, int $id): Response
     {
-        $authorization = $this->authorization->isGranted('create', $customer);
-
-        if (!$authorization) {
-            return $responder($this->authorizationHelper->checkCreate($authorization), Response::HTTP_FORBIDDEN);
-        }
+        $customer = $this->customerRepo->findById($id);
+        $authorization = $this->authorization->isGranted('createUser', $customer);
+        $this->checkAuthorization->checkCreate($authorization);
 
         $dto = $this->resolverUser->createUserDTO($request->getContent());
-        $errors = $this->validator->validate($dto, '400 Requête non conforme !');
-
-        if (!is_null($errors)) {
-            return $responder($errors, Response::HTTP_BAD_REQUEST);
-        }
+        $this->validator->validate($dto);
 
         $user = $this->resolverUser->save($dto, $customer);
 
-        return $responder(
+        return JsonResponder::response(
             null,
             Response::HTTP_CREATED,
             $this->url->generateHeader(
                 "api_show_user_details",
                 [
-                    "idCustomer" => $customer->getId(),
-                    "idUser" => $user->getId()
+                    "customerId" => $customer->getId(),
+                    "userId" => $user->getId()
                 ]
             )
         );
