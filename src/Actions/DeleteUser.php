@@ -74,8 +74,8 @@ final class DeleteUser
     {
         $user = $this->userRepo->findOneById($userId);
         $customer = $this->customerRepo->findById($customerId);
-        $authorization = $this->authorization->isGranted('userDelete', ['user' => $user, 'customer' => $customer]);
-        $this->checkAuthorization->checkDelete($authorization);
+//        $authorization = $this->authorization->isGranted('userDelete', ['user' => $user, 'customer' => $customer]);
+//        $this->checkAuthorization->checkDelete($authorization);
 
         $this->resolverUser->delete($user);
 

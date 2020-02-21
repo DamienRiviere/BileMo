@@ -6,9 +6,14 @@ use App\Domain\Services\Pagination;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+/**
+ * Class UsersNormalizer
+ * @package App\Domain\User\Normalizer
+ */
 final class UsersNormalizer implements ContextAwareNormalizerInterface
 {
 
@@ -21,6 +26,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
     /** @var UrlGeneratorInterface */
     protected $urlGenerator;
 
+    /**
+     * UsersNormalizer constructor.
+     * @param ObjectNormalizer $normalizer
+     * @param UserRepository $userRepo
+     * @param UrlGeneratorInterface $urlGenerator.
+     */
     public function __construct(
         ObjectNormalizer $normalizer,
         UserRepository $userRepo,
@@ -31,11 +42,24 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         $this->urlGenerator = $urlGenerator;
     }
 
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     * @param array $context
+     * @return bool
+     */
     public function supportsNormalization($data, string $format = null, array $context = [])
     {
         return $data instanceof User && in_array('listUser', $context['groups']);
     }
 
+    /**
+     * @param mixed $object
+     * @param string|null $format
+     * @param array $context
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function normalize($object, string $format = null, array $context = []): array
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -64,6 +88,11 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     */
     public function getSelfLink(array $data, User $object): array
     {
         $data['_link']['self']['href'] = $this->urlGenerator->generate(
@@ -77,6 +106,11 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $context
+     * @return array
+     */
     public function getFirstPageLink(array $data, array $context): array
     {
         $data['_link']['first']['href'] = $this->urlGenerator->generate(
@@ -90,6 +124,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $context
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getLastPageLink(array $data, array $context, Pagination $pagination): array
     {
         $data['_link']['last']['href'] = $this->urlGenerator->generate(
@@ -103,6 +143,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $context
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getNextPageLink(array $data, array $context, Pagination $pagination): array
     {
         $data['_link']['next']['href'] = $this->urlGenerator->generate(
@@ -116,6 +162,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $context
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getPreviousPageLink(array $data, array $context, Pagination $pagination): array
     {
         $data['_link']['prev']['href'] = $this->urlGenerator->generate(
@@ -129,6 +181,12 @@ final class UsersNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedCustomer(array $data, User $object): array
     {
         $data['_embedded']['customer'] = $this->normalizer->normalize(

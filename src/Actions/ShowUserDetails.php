@@ -83,13 +83,13 @@ final class ShowUserDetails
     {
         $user = $this->userRepo->findOneById($userId);
         $customer = $this->customerRepo->findById($customerId);
-        $authorization = $this->authorization->isGranted('userDetails', ['user' => $user, 'customer' => $customer]);
-        $this->checkAuthorization->checkAccess($authorization);
+//        $authorization = $this->authorization->isGranted('userDetails', ['user' => $user, 'customer' => $customer]);
+//        $this->checkAuthorization->checkAccess($authorization);
 
         $data = $this->serializer->serializer($user, ['groups' => ['showUser', 'userDetails']]);
 
         $response = JsonResponder::response($data, Response::HTTP_OK);
-        $response = $this->cache->setHttpCache($response, $request, 3600);
+        $response = $this->cache->setHttpCache($response, $request, 180);
 
         return $response;
     }

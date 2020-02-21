@@ -2,6 +2,10 @@
 
 namespace App\Domain\Services;
 
+/**
+ * Class Pagination
+ * @package App\Domain\Services
+ */
 final class Pagination
 {
 
@@ -14,6 +18,12 @@ final class Pagination
     /** @var int  */
     protected $currentPage;
 
+    /**
+     * Pagination constructor.
+     * @param int $limit
+     * @param array $data
+     * @param int $currentPage
+     */
     public function __construct(int $limit, array $data, int $currentPage)
     {
         $this->limit = $limit;

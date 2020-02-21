@@ -6,9 +6,14 @@ use App\Domain\Services\Pagination;
 use App\Entity\Smartphone;
 use App\Repository\SmartphoneRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+/**
+ * Class ProductsNormalizer
+ * @package App\Domain\Product\Normalizer
+ */
 final class ProductsNormalizer implements ContextAwareNormalizerInterface
 {
 
@@ -31,11 +36,24 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         $this->urlGenerator = $urlGenerator;
     }
 
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     * @param array $context
+     * @return bool
+     */
     public function supportsNormalization($data, string $format = null, array $context = [])
     {
         return $data instanceof Smartphone && in_array('listProduct', $context['groups']);
     }
 
+    /**
+     * @param mixed $object
+     * @param string|null $format
+     * @param array $context
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function normalize($object, string $format = null, array $context = []): array
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -67,6 +85,11 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     */
     public function getSelfLink(array $data, Smartphone $object): array
     {
         $data['_link']['self']['href'] = $this->urlGenerator->generate(
@@ -77,6 +100,10 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function getFirstPageLink(array $data): array
     {
         $data['_link']['first']['href'] = $this->urlGenerator->generate(
@@ -87,6 +114,11 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getLastPageLink(array $data, Pagination $pagination): array
     {
         $data['_link']['last']['href'] = $this->urlGenerator->generate(
@@ -97,6 +129,11 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getNextPageLink(array $data, Pagination $pagination): array
     {
         $data['_link']['next']['href'] = $this->urlGenerator->generate(
@@ -107,6 +144,11 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Pagination $pagination
+     * @return array
+     */
     public function getPreviousPageLink(array $data, Pagination $pagination): array
     {
         $data['_link']['prev']['href'] = $this->urlGenerator->generate(
@@ -117,6 +159,12 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedDisplay(array $data, Smartphone $object): array
     {
         $data['_embedded']['display'] = $this->normalizer->normalize(
@@ -128,6 +176,12 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedBattery(array $data, Smartphone $object): array
     {
         $data['_embedded']['battery'] = $this->normalizer->normalize(

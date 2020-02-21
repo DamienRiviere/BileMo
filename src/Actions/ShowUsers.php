@@ -92,8 +92,8 @@ final class ShowUsers
     {
         $customer = $this->customerRepo->findById($id);
         $users = $this->userRepo->findByCustomer($customer);
-        $authorization = $this->authorization->isGranted('usersList', ['users' => $users, 'customer' => $customer]);
-        $this->checkAuthorization->checkAccess($authorization);
+//        $authorization = $this->authorization->isGranted('usersList', ['users' => $users, 'customer' => $customer]);
+//        $this->checkAuthorization->checkAccess($authorization);
 
         $page = $this->paginationHelper->checkPage($request, $users, User::LIMIT_PER_PAGE);
 
@@ -108,7 +108,7 @@ final class ShowUsers
         );
 
         $response = JsonResponder::response($data, Response::HTTP_OK);
-        $response = $this->cache->setHttpCache($response, $request, 3600);
+        $response = $this->cache->setHttpCache($response, $request, 180);
 
         return $response;
     }

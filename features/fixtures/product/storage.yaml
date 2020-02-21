@@ -1,0 +1,4 @@
+App\Entity\Storage:
+  storage:
+    capacity: '<sentence(1)>'
+    price: '<randomNumber()>'

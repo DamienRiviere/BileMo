@@ -59,7 +59,7 @@ final class ShowProductDetails
         $data = $this->serializer->serializer($smartphone, ['groups' => ['showProduct', 'productDetails']]);
 
         $response = JsonResponder::response($data, Response::HTTP_OK);
-        $response = $this->cache->setHttpCache($response, $request, 3600);
+        $response = $this->cache->setHttpCache($response, $request, 180);
 
         return $response;
     }

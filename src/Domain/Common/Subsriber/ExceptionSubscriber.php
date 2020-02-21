@@ -11,6 +11,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Class ExceptionSubscriber
+ * @package App\Domain\Common\Subsriber
+ */
 final class ExceptionSubscriber implements EventSubscriberInterface
 {
 

@@ -1,0 +1,5 @@
+App\Entity\Display:
+  display:
+    size: '<sentence(1)>'
+    resolution: '<sentence(1)>'
+    type: '<sentence(1)>'

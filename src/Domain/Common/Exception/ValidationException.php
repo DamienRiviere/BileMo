@@ -4,12 +4,21 @@ namespace App\Domain\Common\Exception;
 
 use Throwable;
 
+/**
+ * Class ValidationException
+ * @package App\Domain\Common\Exception
+ */
 final class ValidationException extends \Exception
 {
 
     /** @var array */
     protected $params;
 
+    /**
+     * ValidationException constructor.
+     * @param string $message
+     * @param array $params
+     */
     public function __construct($message = "", array $params = [])
     {
         parent::__construct($message);

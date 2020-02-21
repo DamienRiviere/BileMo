@@ -37,7 +37,7 @@ nelmio_api_doc:
                               $ref: "#/definitions/Login"
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         401:
                             description: "Invalid credentials"
                         200:
@@ -59,7 +59,7 @@ nelmio_api_doc:
                           description: "Filter by name or os"
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "Products list not found or page doesnt exist"
                         401:
@@ -82,7 +82,7 @@ nelmio_api_doc:
                           description: "Unique identifier of product"
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "Product not found"
                         401:
@@ -112,7 +112,7 @@ nelmio_api_doc:
                           description: "Filter by email or slug"
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "Users list or customer not found, page doesnt exist"
                         403:
@@ -137,7 +137,7 @@ nelmio_api_doc:
                           required: true
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "Customer not found"
                         403:
@@ -145,7 +145,7 @@ nelmio_api_doc:
                         401:
                             description: "Token is invalid, expired or don't exist, customer has to authenticate to get a token"
                         400:
-                            description: "Validation error"
+                            description: "Validation authentication"
                         201:
                             description: "New user created"
             #### ShowUserDetails ####
@@ -167,7 +167,7 @@ nelmio_api_doc:
                           required: true
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "User details or customer not found"
                         403:
@@ -195,7 +195,7 @@ nelmio_api_doc:
                           required: true
                     responses:
                         500:
-                            description: "Internal server error"
+                            description: "Internal server authentication"
                         404:
                             description: "Customer or user is not found"
                         403:

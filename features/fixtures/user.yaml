@@ -1,0 +1,10 @@
+App\Domain\User\UserDTO:
+  user:
+    firstName: '<firstName()>'
+    lastName: '<lastName()>'
+    email: '<email()>'
+    street: '<streetName()>'
+    city: '<city()>'
+    region: '<state()>'
+    postalCode: '<randomNumber()>'
+    phoneNumber: '<randomNumber()>'

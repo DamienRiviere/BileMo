@@ -4,6 +4,10 @@ namespace App\Domain\Services;
 
 use App\Domain\Common\Exception\AuthorizationException;
 
+/**
+ * Class CheckAuthorization
+ * @package App\Domain\Services
+ */
 final class CheckAuthorization
 {
     
@@ -11,6 +15,11 @@ final class CheckAuthorization
     public const CREATE_MESSAGE = 'Vous n\'êtes pas autorisé à créer cette ressource !';
     public const DELETE_MESSAGE = 'Vous n\'êtes pas autorisé à supprimer cette ressource !';
 
+    /**
+     * @param bool $authorization
+     * @return null
+     * @throws AuthorizationException
+     */
     public function checkAccess(bool $authorization)
     {
         if (!$authorization) {
@@ -20,6 +29,11 @@ final class CheckAuthorization
         return null;
     }
 
+    /**
+     * @param bool $authorization
+     * @return null
+     * @throws AuthorizationException
+     */
     public function checkCreate(bool $authorization)
     {
         if (!$authorization) {
@@ -29,6 +43,11 @@ final class CheckAuthorization
         return null;
     }
 
+    /**
+     * @param bool $authorization
+     * @return null
+     * @throws AuthorizationException
+     */
     public function checkDelete(bool $authorization)
     {
         if (!$authorization) {

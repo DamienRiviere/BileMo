@@ -2,7 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Domain\Customer\CustomerDTO;
+use App\Domain\User\UserDTO;
+use App\Entity\Battery;
+use App\Entity\Camera;
 use App\Entity\Customer;
+use App\Entity\CustomerAddress;
+use App\Entity\Display;
+use App\Entity\Smartphone;
+use App\Entity\Storage;
+use App\Entity\User;
+use App\Entity\UserAddress;
 use Behat\Behat\Context\Context;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -67,28 +77,10 @@ class DoctrineContext implements Context
     }
 
     /**
-     * @Then the following entity :arg1 should have :arg2 entry into database
-     *
-     * @param string $entity
-     * @param        $number
-     *
-     * @throws Exception
-     */
-    public function theFollowingEntityShouldHaveEntryIntoDatabase(string $entity, $number)
-    {
-        $totalEntries = $this->getManager()->getRepository($entity)->findAll();
-
-        if (count($totalEntries) !== (int) $number) {
-            throw new Exception(
-                sprintf("'%s' entry expected, '%s' found", $number, count($totalEntries))
-            );
-        }
-    }
-
-    /**
      * @Given I load following file :arg1
      *
      * @param string $file
+     * @throws Exception
      */
     public function iLoadFollowingFile(string $file)
     {
@@ -96,69 +88,178 @@ class DoctrineContext implements Context
         $objectSet = $loader->loadFile(__DIR__ . '/../fixtures/' . $file);
 
         foreach ($objectSet->getObjects() as $object) {
-            if ($object instanceof Customer) {
-                $customer = new Customer();
-                $customer
-                    ->setPassword($this->encoder->encodePassword($customer, $object->getPassword()))
-                    ->setEmail($object->getEmail())
-                    ->setCustomerSince($object->getCustomerSince())
-                    ->setOrganization($object->getOrganization())
-                    ->setAddress($object->getAddress());
+            if ($object instanceof CustomerDTO) {
+                $this->saveCustomerAndUser($object);
+            }
 
-
-                $this->getManager()->persist($customer);
-            } else {
-                $this->getManager()->persist($object);
+            if ($object instanceof Smartphone) {
+                $this->createSmartphone($object);
             }
         }
 
         $this->getManager()->flush();
     }
 
-    /**
-     * @param AbstractEntity $entity
-     * @param string         $uuid
-     *
-     * @throws ReflectionException
-     */
-    private function setUuid(AbstractEntity $entity, string $uuid)
+    public function saveCustomerAndUser(CustomerDTO $object)
     {
-        $reflection = new \ReflectionClass($entity);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($entity, $uuid);
-    }
+        $customer = $this->createCustomer($object);
 
-    /**
-     * @Given object :classname with property :property as value :value should have following id :targetId
-     */
-    public function objectWithPropertyAsValueShouldHaveFollowingId($classname, $property, $value, $targetId)
-    {
-        /** @var AbstractEntity $entity */
-        $entity = $this->getManager()->getRepository($classname)
-            ->findOneBy(
-                [
-                    $property => $value
-                ]
-            );
-        $this->setUuid($entity, $targetId);
-        $this->getManager()->flush();
-    }
+        for ($i = 0; $i < 50; $i++) {
+            $user = $this->getUser();
 
-    /**
-     * @Then object on entity :arg1 with property :arg2 and value :arg3 should be exist
-     */
-    public function objectOnEntityWithPropertyAndValueShouldBeExist($arg1, $arg2, $arg3)
-    {
-        $entity = $this->doctrine->getRepository($arg1)
-            ->findOneBy(
-                [
-                    $arg2 => $arg3,
-                ]
-            );
+            $customer->addUser($user);
+            $user->setCustomer($customer);
 
-        if (is_null($entity)) {
-            throw new Exception('Object should be exist');
+            $this->getManager()->persist($customer);
+            $this->getManager()->persist($user);
         }
+    }
+
+    public function createCustomer(CustomerDTO $object)
+    {
+        $customer = new Customer();
+        $customer
+            ->setPassword($this->encoder->encodePassword($customer, $object->getPassword()))
+            ->setEmail($object->getPassword())
+            ->setCustomerSince(new DateTime())
+            ->setOrganization($object->getOrganization())
+        ;
+
+        $customerAddress = $this->createCustomerAddress($object);
+
+        $customer->setAddress($customerAddress);
+
+        return $customer;
+    }
+
+    public function createCustomerAddress(CustomerDTO $object)
+    {
+        $customerAddress = new CustomerAddress();
+        $customerAddress
+            ->setPhoneNumber($object->getPhoneNumber())
+            ->setPostalCode($object->getPostalCode())
+            ->setRegion($object->getRegion())
+            ->setCity($object->getCity())
+            ->setStreet($object->getStreet())
+        ;
+
+        return $customerAddress;
+    }
+
+    public function getUser()
+    {
+        $loader = new NativeLoader();
+        $objectSet = $loader->loadFile(__DIR__ . '/../fixtures/user.yaml');
+
+        foreach ($objectSet->getObjects() as $object) {
+            $user = $this->createUser($object);
+            $userAddress = $this->createUserAddress($object);
+            $user->addAddress($userAddress);
+
+            return $user;
+        }
+    }
+
+    public function createUser(UserDTO $object)
+    {
+        $user = new User();
+        $user
+            ->setEmail($object->getEmail())
+            ->setFirstName($object->getFirstName())
+            ->setLastName($object->getLastName())
+        ;
+
+        return $user;
+    }
+
+    public function createUserAddress(UserDTO $object)
+    {
+        $userAddress = new UserAddress();
+        $userAddress
+            ->setStreet($object->getStreet())
+            ->setCity($object->getCity())
+            ->setRegion($object->getRegion())
+            ->setPhoneNumber((int)$object->getPhoneNumber())
+            ->setPostalCode((int)$object->getPostalCode())
+        ;
+
+        return $userAddress;
+    }
+
+    public function createSmartphone(Smartphone $object)
+    {
+        $smartphone = new Smartphone();
+        $smartphone
+            ->setName($object->getName())
+            ->setOs($object->getOs())
+            ->setDimensions($object->getDimensions())
+            ->setWeight($object->getWeight())
+            ->setProcessor($object->getProcessor())
+            ->setGpu($object->getGpu())
+            ->setRam($object->getRam())
+            ->setColors($object->getColors())
+            ->setPorts($object->getPorts())
+        ;
+
+        $display = $this->createDisplay($object->getDisplay());
+        $storage = $this->createStorage($object->getStorage()[0]);
+        $camera = $this->createCamera($object->getCamera());
+        $battery = $this->createBattery($object->getBattery());
+
+        $smartphone
+            ->setDisplay($display)
+            ->setCamera($camera)
+            ->setBattery($battery)
+            ->addStorage($storage)
+        ;
+
+        $this->getManager()->persist($smartphone);
+    }
+
+    public function createDisplay(Display $object)
+    {
+        $display = new Display();
+        $display
+            ->setSize($object->getSize())
+            ->setType($object->getType())
+            ->setResolution($object->getResolution())
+        ;
+
+        return $display;
+    }
+
+    public function createStorage(Storage $object)
+    {
+        $storage = new Storage();
+        $storage
+            ->setCapacity($object->getCapacity())
+            ->setPrice($object->getPrice())
+        ;
+
+        return $storage;
+    }
+
+    public function createCamera(Camera $object)
+    {
+        $camera = new Camera();
+        $camera
+            ->setMegapixels($object->getMegapixels())
+        ;
+
+        return $camera;
+    }
+
+    public function createBattery(Battery $object)
+    {
+        $battery = new Battery();
+        $battery
+            ->setCapacity($object->getCapacity())
+            ->setFastCharge($object->getFastCharge())
+            ->setWirelessCharging($object->getWirelessCharging())
+            ->setRemovableBattery($object->getRemovableBattery())
+            ->setBatteryTechnology($object->getBatteryTechnology())
+        ;
+
+        return $battery;
     }
 }

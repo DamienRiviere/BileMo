@@ -7,11 +7,20 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * Class UsersListVoter
+ * @package App\Domain\Common\Voters
+ */
 final class UsersListVoter extends Voter
 {
 
     protected const LIST = 'usersList';
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @return bool
+     */
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [self::LIST])) {
@@ -41,6 +50,12 @@ final class UsersListVoter extends Voter
         return true;
     }
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $subject['users'][0];

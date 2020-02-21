@@ -13,6 +13,11 @@ final class UserVoter extends Voter
     protected const DETAILS = 'userDetails';
     protected const DELETE = 'userDelete';
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @return bool
+     */
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [self::DETAILS, self::DELETE])) {
@@ -42,6 +47,12 @@ final class UserVoter extends Voter
         return true;
     }
 
+    /**
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $subject['user'];
