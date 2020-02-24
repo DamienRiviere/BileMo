@@ -1,0 +1,7 @@
+App\Entity\Battery:
+  battery:
+    capacity: '<sentence(1)>'
+    batteryTechnology: '<sentence(1)>'
+    removableBattery: '<sentence(1)>'
+    wirelessCharging: '<sentence(1)>'
+    fastCharge: '<sentence(1)>'

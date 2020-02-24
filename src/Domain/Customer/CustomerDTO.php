@@ -2,6 +2,10 @@
 
 namespace App\Domain\Customer;
 
+/**
+ * Class CustomerDTO
+ * @package App\Domain\Customer
+ */
 final class CustomerDTO
 {
 

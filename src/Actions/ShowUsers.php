@@ -108,7 +108,7 @@ final class ShowUsers
         );
 
         $response = JsonResponder::response($data, Response::HTTP_OK);
-        $response = $this->cache->setHttpCache($response, $request, 3600);
+        $response = $this->cache->setHttpCache($response, $request, 180);
 
         return $response;
     }

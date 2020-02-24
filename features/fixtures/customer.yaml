@@ -1,16 +1,19 @@
-include:
-  - 'address_customer.yaml'
-
-App\Entity\Customer:
-  customer1:
+App\Domain\Customer\CustomerDTO:
+  customerTest:
+    email: 'customer@gmail.com'
+    password: 'password'
+    organization: 'CustomerCompany'
+    street: 'Ma rue'
+    city: 'Ma ville'
+    region: 'Ma région'
+    postalCode: '487845'
+    phoneNumber: '8484541214'
+  customer{1..5}:
     email: '<email()>'
     password: '<password()>'
     organization: '<company()>'
-    customerSince: '<datetime()>'
-    address: '@addressCustomer1'
-  customer2:
-    email: '<email()>'
-    password: '<password()>'
-    organization: '<company()>'
-    customerSince: '<datetime()>'
-    address: '@addressCustomer2'
+    street: '<streetName()>'
+    city: '<city()>'
+    region: '<state()>'
+    postalCode: '<randomNumber()>'
+    phoneNumber: '<randomNumber()>'

@@ -4,9 +4,14 @@ namespace App\Domain\User\Normalizer;
 
 use App\Entity\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+/**
+ * Class UserDetailsNormalizer
+ * @package App\Domain\User\Normalizer
+ */
 final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
 {
 
@@ -16,6 +21,11 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
     /** @var UrlGeneratorInterface */
     protected $urlGenerator;
 
+    /**
+     * UserDetailsNormalizer constructor.
+     * @param ObjectNormalizer $normalizer
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(
         ObjectNormalizer $normalizer,
         UrlGeneratorInterface $urlGenerator
@@ -24,11 +34,24 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
         $this->urlGenerator = $urlGenerator;
     }
 
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     * @param array $context
+     * @return bool
+     */
     public function supportsNormalization($data, string $format = null, array $context = [])
     {
         return $data instanceof User && in_array('userDetails', $context['groups']);
     }
 
+    /**
+     * @param mixed $object
+     * @param string|null $format
+     * @param array $context
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function normalize($object, string $format = null, array $context = []): array
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -44,6 +67,11 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     */
     public function getSelfLink(array $data, User $object): array
     {
         $data['_link']['list']['href'] = $this->urlGenerator->generate(
@@ -56,6 +84,11 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     */
     public function getDeleteLink(array $data, User $object): array
     {
         $data['_link']['delete']['href'] = $this->urlGenerator->generate(
@@ -69,6 +102,12 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedAddress(array $data, User $object): array
     {
         for ($i = 0; $i < count($object->getAddress()); $i++) {
@@ -82,6 +121,12 @@ final class UserDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param User $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedCustomer(array $data, User $object): array
     {
         $data['_embedded']['customer'] = $this->normalizer->normalize(

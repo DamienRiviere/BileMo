@@ -4,9 +4,14 @@ namespace App\Domain\Product\Normalizer;
 
 use App\Entity\Smartphone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+/**
+ * Class ProductDetailsNormalizer
+ * @package App\Domain\Product\Normalizer
+ */
 final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
 {
 
@@ -16,17 +21,35 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
     /** @var UrlGeneratorInterface */
     protected $urlGenerator;
 
+    /**
+     * ProductDetailsNormalizer constructor.
+     * @param ObjectNormalizer $normalizer
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(ObjectNormalizer $normalizer, UrlGeneratorInterface $urlGenerator)
     {
         $this->normalizer = $normalizer;
         $this->urlGenerator = $urlGenerator;
     }
 
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     * @param array $context
+     * @return bool
+     */
     public function supportsNormalization($data, string $format = null, array $context = [])
     {
         return $data instanceof Smartphone && in_array('productDetails', $context['groups']);
     }
 
+    /**
+     * @param mixed $object
+     * @param string|null $format
+     * @param array $context
+     * @return array|\ArrayObject|bool|float|int|mixed|string|null
+     * @throws ExceptionInterface
+     */
     public function normalize($object, string $format = null, array $context = [])
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -43,6 +66,10 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function getListLink(array $data): array
     {
         $data['_link']['list']['href'] = $this->urlGenerator->generate(Smartphone::SHOW_PRODUCTS);
@@ -50,6 +77,12 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedDisplay(array $data, Smartphone $object): array
     {
         $data['_embedded']['display'] = $this->normalizer->normalize(
@@ -61,6 +94,12 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedBattery(array $data, Smartphone $object): array
     {
         $data['_embedded']['battery'] = $this->normalizer->normalize(
@@ -72,6 +111,12 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedCamera(array $data, Smartphone $object): array
     {
         $data['_embedded']['camera'] = $this->normalizer->normalize(
@@ -83,6 +128,12 @@ final class ProductDetailsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedStorage(array $data, Smartphone $object): array
     {
         for ($i = 0; $i < count($object->getStorage()); $i++) {
