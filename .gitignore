@@ -31,3 +31,4 @@ behat.yml.dist
 /config/jwt_test/*.pem
 ###< lexik/jwt-authentication-bundle ###
 !/public/adminer-4.7.5.php
+
