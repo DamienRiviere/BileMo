@@ -31,6 +31,51 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr-FR');
 
+        $damien = new Customer();
+        $damien
+            ->setEmail("riviere.damien64@gmail.com")
+            ->setPassword($this->encoder->encodePassword($damien, 'password'))
+            ->setOrganization("DRE")
+            ->setRoles("ROLE_USER")
+            ->setCustomerSince(new \DateTime())
+        ;
+
+        $customerAddress1 = new CustomerAddress();
+        $customerAddress1
+            ->setStreet($faker->streetAddress)
+            ->setCity($faker->city)
+            ->setRegion($faker->state)
+            ->setPostalCode((int)$faker->postcode)
+            ->setPhoneNumber(79548)
+            ->setCustomer($damien)
+        ;
+
+        for ($u = 0; $u < 50; $u++) {
+            $user1 = new User();
+            $user1
+                ->setFirstName($faker->firstName)
+                ->setLastName($faker->lastName)
+                ->setEmail($faker->email)
+                ->setCreatedAt(new \DateTime())
+                ->setCustomer($damien)
+            ;
+
+            $userAddress1 = new UserAddress();
+            $userAddress1
+                ->setStreet($faker->streetAddress)
+                ->setCity($faker->city)
+                ->setRegion($faker->state)
+                ->setPostalCode((int)$faker->postcode)
+                ->setPhoneNumber(79548)
+                ->setUser($user1)
+            ;
+
+            $manager->persist($userAddress1);
+            $manager->persist($user1);
+        }
+
+        $manager->persist($damien);
+
         for ($i = 0; $i < 50; $i++) {
             $smartphone = new Smartphone();
             $smartphone
@@ -123,7 +168,6 @@ class AppFixtures extends Fixture
                 ;
 
                 $manager->persist($userAddress);
-
                 $manager->persist($user);
             }
 
