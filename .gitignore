@@ -3,6 +3,8 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/.env
+/.env.test
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
@@ -26,5 +28,6 @@ behat.yml.dist
 
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
+/config/jwt_test/*.pem
 ###< lexik/jwt-authentication-bundle ###
 !/public/adminer-4.7.5.php
