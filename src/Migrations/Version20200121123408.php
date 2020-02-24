@@ -20,7 +20,7 @@ final class Version20200121123408 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'sqlite', 'Migration can only be executed safely on \'sqlite\'.');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'sqlite' or 'mysql', 'Migration can only be executed safely on \'sqlite\' or \'mysql\'.');
 
         $this->addSql('CREATE TABLE battery (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, capacity VARCHAR(255) NOT NULL, battery_technology VARCHAR(255) NOT NULL, removable_battery VARCHAR(255) NOT NULL, wireless_charging VARCHAR(255) NOT NULL, fast_charge VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE TABLE camera (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, megapixels VARCHAR(255) NOT NULL)');
@@ -43,7 +43,7 @@ final class Version20200121123408 extends AbstractMigration
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'sqlite', 'Migration can only be executed safely on \'sqlite\'.');
+		$this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'sqlite' or 'mysql', 'Migration can only be executed safely on \'sqlite\' or \'mysql\'.');
 
         $this->addSql('DROP TABLE battery');
         $this->addSql('DROP TABLE camera');
