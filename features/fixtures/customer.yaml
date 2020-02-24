@@ -7,7 +7,7 @@ App\Domain\Customer\CustomerDTO:
     city: 'Ma ville'
     region: 'Ma région'
     postalCode: '487845'
-    phoneNumber: '8484541214'
+    phoneNumber: '848454'
   customer{1..5}:
     email: '<email()>'
     password: '<password()>'

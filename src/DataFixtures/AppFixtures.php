@@ -98,7 +98,7 @@ class AppFixtures extends Fixture
                 ->setCity($faker->city)
                 ->setRegion($faker->state)
                 ->setPostalCode((int)$faker->postcode)
-                ->setPhoneNumber((int)$faker->phoneNumber)
+                ->setPhoneNumber(79548)
                 ->setCustomer($customer)
             ;
 
@@ -118,7 +118,7 @@ class AppFixtures extends Fixture
                     ->setCity($faker->city)
                     ->setRegion($faker->state)
                     ->setPostalCode((int)$faker->postcode)
-                    ->setPhoneNumber((int)$faker->phoneNumber)
+                    ->setPhoneNumber(79548)
                     ->setUser($user)
                 ;
 

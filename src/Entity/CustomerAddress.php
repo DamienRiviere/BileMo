@@ -32,12 +32,12 @@ class CustomerAddress
     private $region;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", length=255)
      */
     private $postalCode;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", length=255)
      */
     private $phoneNumber;
 
