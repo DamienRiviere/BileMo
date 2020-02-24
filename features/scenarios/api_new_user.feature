@@ -2,16 +2,16 @@
 
   Feature: New user
 
-    Background:
+    Background: Load fixture
       When I load following file 'customer.yaml'
 
-      Scenario:
-        When I send a "POST" request to "/api/customers/1/users" with body:
+      Scenario: Test to create a new user and after that try to create the same user again
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "POST" request to "/api/customers/1/users" with body:
         """
         {
           "firstName": "Damien",
-          "lastName": "Dupont",
-          "email": "damien.dupont@gmail.com",
+          "lastName": "Riviere",
+          "email": "damien@gmail.com",
           "street": "2 Ma rue",
           "city": "Ma ville",
           "region": "Ma region",
@@ -20,12 +20,12 @@
         }
         """
         And the response status code should be 201
-        When I send a "POST" request to "/api/customers/1/users" with body:
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "POST" request to "/api/customers/1/users" with body:
         """
         {
           "firstName": "Damien",
-          "lastName": "Dupont",
-          "email": "damien.dupont@gmail.com",
+          "lastName": "Riviere",
+          "email": "damien@gmail.com",
           "street": "2 Ma rue",
           "city": "Ma ville",
           "region": "Ma region",
@@ -41,8 +41,8 @@
         }
         """
 
-      Scenario:
-        When I send a "POST" request to "/api/customers/1/users" with body:
+      Scenario: Test to create a user with every fields empty
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "POST" request to "/api/customers/1/users" with body:
         """
         {
           "firstName": "",
@@ -70,13 +70,47 @@
         }
         """
 
-      Scenario:
-        When I send a "POST" request to "/api/customers/6/users"
+      Scenario: Test to create a user with a customer who doesn't exist
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "POST" request to "/api/customers/10/users" with body:
+        """
+        {
+          "firstName": "Damien",
+          "lastName": "Riviere",
+          "email": "damien@gmail.com",
+          "street": "2 Ma rue",
+          "city": "Ma ville",
+          "region": "Ma region",
+          "postalCode": "99596",
+          "phoneNumber": "51215641"
+        }
+        """
         Then the response status code should be 404
         And the JSON should be equal to:
         """
         {
             "message": "Client introuvable !"
+        }
+        """
+
+      Scenario: Test to create one user with another customer
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "POST" request to "/api/customers/2/users" with body:
+        """
+        {
+          "firstName": "Damien",
+          "lastName": "Riviere",
+          "email": "damien@gmail.com",
+          "street": "2 Ma rue",
+          "city": "Ma ville",
+          "region": "Ma region",
+          "postalCode": "99596",
+          "phoneNumber": "51215641"
+        }
+        """
+        Then the response status code should be 403
+        And the JSON should be equal to:
+        """
+        {
+            "message": "Vous n'êtes pas autorisé à créer cette ressource !"
         }
         """
 

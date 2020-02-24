@@ -2,11 +2,15 @@
 
   Feature: Show users
 
-    Background:
+    Background: Load fixtures and log to the API
       When I load following file 'customer.yaml'
+      When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/1/users" with body:
+      """
+        {
+        }
+      """
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users"
+      Scenario: Test all nodes
         Then the response status code should be 200
         And the response should be in JSON
         And the JSON node "root[0].firstName" should exist
@@ -16,8 +20,7 @@
         And the JSON node "root[0]._link" should exist
         And the JSON node "root[0]._embedded" should exist
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users"
+      Scenario: Test _link nodes
         Then the response status code should be 200
         And the response should be in JSON
         And the JSON node "root[0]._link.self" should exist
@@ -34,22 +37,29 @@
         And the JSON node "root[0]._link.next.href" should contain "/api/customers/1/users?page=2"
         And the JSON node "root[0]._link.prev" should not exist
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users?page=2"
+      Scenario: Test _link.prev
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/1/users?page=2" with body:
+        """
+          {
+          }
+        """
         Then the response status code should be 200
         And the response should be in JSON
         And the JSON node "root[0]._link.prev" should exist
         And the JSON node "root[0]._link.prev.href" should exist
         And the JSON node "root[0]._link.prev.href" should contain "/api/customers/1/users?page=1"
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users?page=5"
+      Scenario: Test _link.next
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/1/users?page=5" with body:
+        """
+          {
+          }
+        """
         Then the response status code should be 200
         And the response should be in JSON
         And the JSON node "root[0]._link.next" should not exist
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users"
+      Scenario: Test _embedded.customer nodes
         Then the response status code should be 200
         And the response should be in JSON
         And the JSON node "root[0]._embedded.customer" should exist
@@ -57,8 +67,12 @@
         And the JSON node "root[0]._embedded.customer.organization" should exist
         And the JSON node "root[0]._embedded.customer.customerSince" should exist
 
-      Scenario:
-        When I send a "GET" request to "/api/customers/1/users?page=6"
+      Scenario: Test a page who doesn't exist
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/1/users?page=6" with body:
+        """
+          {
+          }
+        """
         Then the response status code should be 404
         And the response should be in JSON
         And the JSON should be equal to:
@@ -66,5 +80,20 @@
         {
             "message": "Cette page n'existe pas !"
         }
+        """
+
+      Scenario: Test to access at users from another customer
+        When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/2/users" with body:
+        """
+          {
+          }
+        """
+        Then the response status code should be 403
+        And the response should be in JSON
+        And the JSON should be equal to:
+        """
+          {
+              "message": "Vous n'êtes pas autorisé à accéder à cette ressource !"
+          }
         """
 

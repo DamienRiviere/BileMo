@@ -83,8 +83,8 @@ final class ShowUserDetails
     {
         $user = $this->userRepo->findOneById($userId);
         $customer = $this->customerRepo->findById($customerId);
-//        $authorization = $this->authorization->isGranted('userDetails', ['user' => $user, 'customer' => $customer]);
-//        $this->checkAuthorization->checkAccess($authorization);
+        $authorization = $this->authorization->isGranted('userDetails', ['user' => $user, 'customer' => $customer]);
+        $this->checkAuthorization->checkAccess($authorization);
 
         $data = $this->serializer->serializer($user, ['groups' => ['showUser', 'userDetails']]);
 

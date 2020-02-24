@@ -83,8 +83,8 @@ final class NewUser
     public function __invoke(Request $request, int $id): Response
     {
         $customer = $this->customerRepo->findById($id);
-//        $authorization = $this->authorization->isGranted('createUser', $customer);
-//        $this->checkAuthorization->checkCreate($authorization);
+        $authorization = $this->authorization->isGranted('createUser', $customer);
+        $this->checkAuthorization->checkCreate($authorization);
 
         $dto = $this->resolverUser->createUserDTO($request->getContent());
         $this->validator->validate($dto);

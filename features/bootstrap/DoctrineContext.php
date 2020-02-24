@@ -120,7 +120,7 @@ class DoctrineContext implements Context
         $customer = new Customer();
         $customer
             ->setPassword($this->encoder->encodePassword($customer, $object->getPassword()))
-            ->setEmail($object->getPassword())
+            ->setEmail($object->getEmail())
             ->setCustomerSince(new DateTime())
             ->setOrganization($object->getOrganization())
         ;
