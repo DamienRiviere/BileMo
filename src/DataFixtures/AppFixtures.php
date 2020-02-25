@@ -31,11 +31,11 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr-FR');
 
-        $damien = new Customer();
-        $damien
-            ->setEmail("riviere.damien64@gmail.com")
-            ->setPassword($this->encoder->encodePassword($damien, 'password'))
-            ->setOrganization("DRE")
+        $customerTest = new Customer();
+        $customerTest
+            ->setEmail("customer@gmail.com")
+            ->setPassword($this->encoder->encodePassword($customerTest, 'password'))
+            ->setOrganization("CustomerOrganization")
             ->setRoles("ROLE_USER")
             ->setCustomerSince(new \DateTime())
         ;
@@ -47,7 +47,7 @@ class AppFixtures extends Fixture
             ->setRegion($faker->state)
             ->setPostalCode((int)$faker->postcode)
             ->setPhoneNumber(79548)
-            ->setCustomer($damien)
+            ->setCustomer($customerTest)
         ;
 
         for ($u = 0; $u < 50; $u++) {
@@ -57,7 +57,7 @@ class AppFixtures extends Fixture
                 ->setLastName($faker->lastName)
                 ->setEmail($faker->email)
                 ->setCreatedAt(new \DateTime())
-                ->setCustomer($damien)
+                ->setCustomer($customerTest)
             ;
 
             $userAddress1 = new UserAddress();
@@ -74,7 +74,7 @@ class AppFixtures extends Fixture
             $manager->persist($user1);
         }
 
-        $manager->persist($damien);
+        $manager->persist($customerTest);
 
         for ($i = 0; $i < 50; $i++) {
             $smartphone = new Smartphone();

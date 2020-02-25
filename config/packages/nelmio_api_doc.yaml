@@ -135,6 +135,11 @@ nelmio_api_doc:
                           name: id
                           description: "Unique identifier of customer"
                           required: true
+                        - in: body
+                          name: body
+                          required: true
+                          schema:
+                            $ref: "#/definitions/NewUser"
                     responses:
                         500:
                             description: "Internal server authentication"
@@ -207,6 +212,16 @@ nelmio_api_doc:
 
         definitions:
             Login:
+                type: object
+                properties:
+                    username:
+                        type: string
+                        required: true
+                        description: "Username is a email address"
+                    password:
+                        type: string
+                        required: true
+            NewUser:
                 type: object
                 properties:
                     first_name:

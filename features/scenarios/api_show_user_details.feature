@@ -4,6 +4,7 @@
 
     Background: Load fixtures and log to the API
       When I load following file "customer.yaml"
+      When I load following file "product/product.yaml"
       When After authentication on url "/api/login_check" with method "POST" as user "customer@gmail.com" with password "password", I send a "GET" request to "/api/customers/1/users/1" with body:
       """
         {
