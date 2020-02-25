@@ -77,6 +77,10 @@ Tutoriels Postman :
 Vous pouvez accéder à la documentation des API à l'adresse suivante en locale :
 
     - http://127.0.0.1:8000/api/doc
+    
+Ou en ligne :
+
+    - https://bilemo-dre.herokuapp.com/api/doc
 
 # Description du projet
 
