@@ -193,6 +193,12 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedCamera(array $data, Smartphone $object): array
     {
         $data['_embedded']['camera'] = $this->normalizer->normalize(
@@ -204,6 +210,12 @@ final class ProductsNormalizer implements ContextAwareNormalizerInterface
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param Smartphone $object
+     * @return array
+     * @throws ExceptionInterface
+     */
     public function getEmbeddedStorage(array $data, Smartphone $object): array
     {
         $data['_embedded']['storage'] = $this->normalizer->normalize(
